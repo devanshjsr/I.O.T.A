@@ -1,6 +1,5 @@
 # iota
-
-A new Flutter project.
+Integrated Online Test Application.
 
 ## Getting Started
 
