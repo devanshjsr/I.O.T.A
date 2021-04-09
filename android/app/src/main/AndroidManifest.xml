@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.iota">
    <application
-        android:label="iota"
+        android:label="I.O.T.A."
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"
