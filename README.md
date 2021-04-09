@@ -1,5 +1,5 @@
 # iota
-Integrated Online Test Application.
+Interactive Online Test Application.
 
 ## Getting Started
 
