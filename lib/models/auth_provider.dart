@@ -85,6 +85,7 @@ class AuthProvider {
             "name": _authData["name"],
             "mobileNumber": _authData["mobileNumber"],
             "email": _authData["email"],
+            "branch": _authData["branch"],
           },
         );
       }
