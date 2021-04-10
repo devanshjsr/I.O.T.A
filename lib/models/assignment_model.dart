@@ -89,6 +89,9 @@ class AssignmentProvider with ChangeNotifier {
         .collection("list_of_submissions")
         .doc(uid)
         .set(submittedAssignment);
+    
+    _studentPendingAssignment.remove(assignment);
+    _studentSubmittedAssignment.add(assignment);
 
     notifyListeners();
   }
@@ -138,6 +141,17 @@ class AssignmentProvider with ChangeNotifier {
           .set(assignmentId);
     }
 
+
+
+      
+    Assignment newAssignment = Assignment(
+      id: docRef.id,name: 
+      assignment["name"],
+      description: assignment["description"],
+      dueDate: assignment["due date"],
+      url: assignment["url_of_question_pdf"]);
+    _onGoingAssignments.add(newAssignment);
+
     notifyListeners();
   }
 
@@ -162,7 +176,10 @@ class AssignmentProvider with ChangeNotifier {
         .collection("list_of_submissions")
         .doc(FirebaseAuth.instance.currentUser.uid)
         .delete();
-
+    
+    _studentSubmittedAssignment.remove(assignment);
+    _studentPendingAssignment.add(assignment);
+    
     notifyListeners();
   }
 
