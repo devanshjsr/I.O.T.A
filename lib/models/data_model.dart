@@ -39,6 +39,8 @@ class DataModel {
   static const HOME = "Home";
   static const CONTACT_US = "Contact Us";
   static const MY_PROFILE = "My Profile";
+  static const ENTERCODE = "Enter Subject Code";
+  static const LENGTHSIX = "Subject Code should be of 6 characters";
 
   //video things
   static const VIDEO_CALL = "Video Call";

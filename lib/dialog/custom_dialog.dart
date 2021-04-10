@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:iota/models/data_model.dart';
 import 'package:provider/provider.dart';
 import 'package:share/share.dart';
-
+import 'package:firebase_auth/firebase_auth.dart';
 import '../models/auth_provider.dart';
 import '../models/subject_model.dart';
 import '../services/dynamic_link_service.dart';
@@ -271,6 +272,98 @@ class CustomDialog {
           );
         });
   }
+
+   static Future showJoinDialog(BuildContext context) {
+    final _formKey = GlobalKey<FormState>();
+    // Map<String, String> _docRef = {
+    //   'subject_code': "",
+    // };
+    String subjectCode = "";
+    final String name = FirebaseAuth.instance.currentUser.displayName;
+    final String uid = FirebaseAuth.instance.currentUser.uid;
+    addMyEnrolledSubjects() {
+      final isValid = _formKey.currentState.validate();
+      if (isValid) {
+        _formKey.currentState.save();
+        Provider.of<SubjectProvider>(context, listen: false)
+            .joinSubjectUsingCode(subjectCode, name, uid)
+            .catchError((error) {
+          String snackBarContent;
+          if (error == "NOT FOUND") {
+            snackBarContent = 'Invalid code, no subject found';
+          } else {
+            snackBarContent = 'Some error occured, please try again later';
+          }
+          final snackBar = SnackBar(
+            content: Text(
+              snackBarContent,
+              style: TextStyle(
+                color: Colors.white,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            backgroundColor: CustomStyle.errorColor,
+          );
+          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+        }).then((value) => Navigator.of(context).pop());
+      }
+    }
+  return showDialog(
+        context: context,
+        builder: (_) {
+          return AlertDialog(
+            title: Text(
+              "Enter Subject Code for joining the team",
+              style: TextStyle(
+                  fontWeight: FontWeight.bold, color: CustomStyle.primaryColor),
+            ),
+            content: Form(
+              key: _formKey,
+              child: TextFormField(
+                autofocus: true,
+                autovalidateMode: AutovalidateMode.onUserInteraction,
+                keyboardType: TextInputType.name,
+                textInputAction: TextInputAction.next,
+                decoration: CustomStyle.customTextFieldDecoration(
+                    labelText: DataModel.ENTERCODE),
+                validator: (value) {
+                  if (value == null || value.trim() == "")
+                    return DataModel.REQUIRED;
+                  if (value.length != 6) return DataModel.LENGTHSIX;
+                  return null;
+                },
+                onSaved: (value) {
+                  subjectCode = value;
+                  // _docRef['subject_code'] = value;
+                },
+              ),
+            ),
+            actions: <Widget>[
+              Padding(
+                padding: const EdgeInsets.fromLTRB(5, 0, 5, 10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    ElevatedButton(
+                      child: Text("Okay"),
+                      onPressed: () {
+                        addMyEnrolledSubjects();
+                      },
+                      style: CustomStyle.customElevatedButtonStyle(),
+                    ),
+                    ElevatedButton(
+                      child: Text("Cancel"),
+                      onPressed: () => Navigator.pop(context),
+                      style: CustomStyle.customElevatedButtonStyle(),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          );
+        });
+  }
+
 
   //  Alert dialog to send password verification link to email
   static Future<bool> resetPasswordDialog(BuildContext context) async {

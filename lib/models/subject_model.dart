@@ -408,4 +408,58 @@ class SubjectProvider with ChangeNotifier {
       throw error;
     }
   }
+
+   Future<void> joinSubjectUsingCode(
+      String subjectCode, String name, String uid) async {
+    try {
+      QuerySnapshot data = await FirebaseFirestore.instance
+          .collection("Subjects")
+          .where('subject_code', isEqualTo: subjectCode)
+          .get();
+      if (data.docs.length == 0) {
+        throw "NOT FOUND";
+      } else {
+        final Map<String, String> enrolledSubject = {
+          "subject_name": data.docs[0].data()["subject_name"],
+        };
+
+        await FirebaseFirestore.instance
+            .collection("Student")
+            .doc(uid)
+            .collection("Enrolled Subjects")
+            .doc(data.docs[0].id)
+            .set(enrolledSubject);
+
+        //Add the newly added Subject into my Enrolled Subject List;
+        Subject newEnrolledSubject = Subject(
+          id: data.docs[0].id,
+          name: data.docs[0].data()["subject_name"],
+          description: data.docs[0].data()["des"],
+          facultyId: data.docs[0].data()["faculty_id"],
+          branch:
+              Subject.extractBranchFromString(data.docs[0].data()["branch"]),
+          subjectCode: data.docs[0].data()["subject_code"],
+        );
+
+        _myEnrolledSubjectsList.add(newEnrolledSubject);
+
+        //Add the userId in the subjects enrolled students list
+        Map<String, String> userName = {
+          "student_name": name,
+        };
+
+        await FirebaseFirestore.instance
+            .collection("Subjects")
+            .doc(data.docs[0].id)
+            .collection("Enrolled Students")
+            .doc(uid)
+            .set(userName);
+
+        notifyListeners();
+
+      }
+    } catch (error) {
+      throw error;
+    }
+  }
 }
