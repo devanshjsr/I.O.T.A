@@ -1,7 +1,7 @@
 # I.O.T.A
 Interactive Online Test Application.
 
-## Project is made for the hack 36 
+![Made-at-Hack-36](https://user-images.githubusercontent.com/47004131/114283344-e8eb2b80-9a66-11eb-944d-7f1e808fe010.png)
 ## Team Name - 36 ka Aakda
 ### Team Members - 
 #### 1. AANCHAL SINGH (Leader)
