@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:iota/models/assignment_model.dart';
 import 'package:iota/models/subject_model.dart';
 import 'package:provider/provider.dart';
 
@@ -35,6 +36,9 @@ class MyApp extends StatelessWidget {
         StreamProvider(
           create: (ctx) => ctx.read<AuthProvider>().authStateChanges,
         ),
+        Provider<AssignmentProvider>(
+          create: (_) => AssignmentProvider(),
+          )
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

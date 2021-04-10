@@ -46,7 +46,19 @@ class DataModel {
   static const VIDEO_CALL = "Video Call";
 
   static const ADD_DEADLINE = "Please choose deadline";
-
+  
+  //Assignment
+   static const ASSIGNMENT_TITLE = "Enter Title";
+  static const ASSIGNMENT_DESCRIPTION = "Enter Description / Instructions";
+  static const DEADLINE = "Select Deadline";
+  static const UPLOAD = "Upload";
+  static const ASSIGNMENT_TOAST = "New Assignment Uploaded";
+  static const SUBMIT = "Submit";
+  static const ATTACH_WORK = "Please attach your work before submission";
+  static const WORKK_SUBMITTED = "Work Submitted";
+  static const WORK_REMOVED = "Assignment Removed";
+  static const DEADLINE_PASSED = "Sorry Deadline Already Passed";
+  static const DEADLINE_CHANGED = "Dealine Changed";
   //Subject
   static const ADD_SUBJECT = "Add Subject";
   static const BRANCH = "Branch";
