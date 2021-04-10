@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
@@ -20,6 +21,8 @@ class AuthProvider {
     try {
       var userCredentials = await _firebaseAuth.signInWithEmailAndPassword(
           email: email, password: password);
+      //  Refetch and store fcm token in case it refreshes
+      String token = await FirebaseMessaging().getToken();
       // print(userCredentials.user.uid);
       var studentCheck = await FirebaseFirestore.instance
           .collection("Student")
@@ -28,9 +31,32 @@ class AuthProvider {
           .get();
       if (studentCheck.docs.isNotEmpty) {
         await MySharedPreferences.isStudentSave(true);
+        FirebaseFirestore.instance
+            .collection("Student")
+            .doc(userCredentials.user.uid)
+            .collection("MyData")
+            .doc(studentCheck.docs.first.id)
+            .update(
+          {"fcmToken": token},
+        );
         return "Student";
       } else {
         await MySharedPreferences.isStudentSave(false);
+
+        var data = await FirebaseFirestore.instance
+            .collection("Faculty")
+            .doc(userCredentials.user.uid)
+            .collection("MyData")
+            .get();
+
+        FirebaseFirestore.instance
+            .collection("Faculty")
+            .doc(userCredentials.user.uid)
+            .collection("MyData")
+            .doc(data.docs.first.id)
+            .update(
+          {"fcmToken": token},
+        );
         return "Faculty";
       }
     } on FirebaseAuthException catch (e) {
@@ -75,6 +101,8 @@ class AuthProvider {
         userId.user.sendEmailVerification();
         Fluttertoast.showToast(
             msg: "A verification link has been sent to your e-mail");
+        String token = await FirebaseMessaging().getToken();
+
         final CollectionReference collectionReference = FirebaseFirestore
             .instance
             .collection(signupType)
@@ -85,7 +113,7 @@ class AuthProvider {
             "name": _authData["name"],
             "mobileNumber": _authData["mobileNumber"],
             "email": _authData["email"],
-            "branch": _authData["branch"],
+            "fcmToken": token
           },
         );
       }
