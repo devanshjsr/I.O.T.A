@@ -1,5 +1,7 @@
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:iota/dialog/custom_dialog.dart';
+import 'package:iota/screens/room/view_room.dart';
 
 import '../../models/shared_preferences.dart';
 import '../../models/subject_model.dart';
@@ -65,6 +67,25 @@ class _SubjectBottomNavBarState extends State<SubjectBottomNavBar> {
                   width: 46,
                   height: 24,
                 ),
+            GestureDetector(
+            onTapDown: (data) {
+              if (MySharedPreferences.isStudent) {
+                Navigator.of(context)
+                    .pushNamed(ViewRoom.routeName, arguments: subject);
+              } else {
+                CustomDialog.showRoomDialog(
+                    context, data.globalPosition, subject);
+              }
+            },
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 10),
+              child: Icon(
+                Icons.group_rounded,
+                size: 26,
+                color: Colors.black,
+              ),
+            ),
+          )
         ],
       ),
       body: getWidget(),

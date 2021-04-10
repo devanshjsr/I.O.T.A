@@ -8,7 +8,9 @@ import 'package:iota/models/assignment_model.dart';
 import 'package:iota/models/data_model.dart';
 import 'package:iota/models/room_model.dart';
 import 'package:iota/screens/room/add_students.dart';
+import 'package:iota/screens/room/create_room.dart';
 import 'package:iota/screens/room/remove_member.dart';
+import 'package:iota/screens/room/view_room.dart';
 import 'package:provider/provider.dart';
 import 'package:share/share.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -524,6 +526,40 @@ class CustomDialog {
               Navigator.of(context).pop();
             },
             child: Text("Remove Room")),
+      ),
+    ];
+    showMenu(
+      context: context,
+      position: RelativeRect.fromLTRB(left, top, 10, 10),
+      items: options,
+    );
+  }
+
+  static void showRoomDialog(
+      BuildContext context, Offset offset, Subject subject) {
+    double left = offset.dx;
+    double top = offset.dy;
+
+    List<PopupMenuEntry<int>> options = [
+      PopupMenuItem(
+        value: 1,
+        child: GestureDetector(
+            onTap: () {
+              Navigator.of(context).pop();
+              Navigator.of(context)
+                  .pushNamed(CreateRoom.routeName, arguments: subject);
+            },
+            child: Text("Create Room")),
+      ),
+      PopupMenuItem(
+        value: 1,
+        child: GestureDetector(
+            onTap: () {
+              Navigator.of(context).pop();
+              Navigator.of(context)
+                  .pushNamed(ViewRoom.routeName, arguments: subject);
+            },
+            child: Text("View Room")),
       ),
     ];
     showMenu(
