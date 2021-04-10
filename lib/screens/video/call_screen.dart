@@ -1,15 +1,16 @@
 import 'dart:async';
 
-import '../../models/shared_preferences.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import '../../dialog/custom_dialog.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import '../../models/caller_model.dart';
+import '../../models/shared_preferences.dart';
 import '../../models/subject_model.dart';
 import '../../services/call.dart';
 import '../../styles.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 // import '../services/call.dart';
 // import '../styles.dart';
@@ -199,16 +200,26 @@ class IndexState extends State<IndexPage> {
       if (snapshot.size == 0) {
         print('NO CHANNEL');
         // no channel with the specified name
-        return showDialog(
-            context: context,
-            builder: (ctx) => AlertDialog(
-                  title: Text('No channel'),
-                ));
+        // return CustomDialog.noChannelDialog(context);
       } else {
         String token = '';
         snapshot.docs.forEach((doc) {
           token = doc.data()['token'];
         });
+
+        //to map firebase uid with agora uid
+        final caller = Caller(
+          callerFirebaseUid: FirebaseAuth.instance.currentUser.uid,
+          channelName: channelName,
+          isStudent: MySharedPreferences.isStudent,
+          callerAgoraUid: null,
+        );
+        Map<String, dynamic> callMap = caller.toMap(caller);
+        await db
+            .collection('channels')
+            .doc('live')
+            .collection(channelName)
+            .add(callMap);
 
         await Navigator.push(
             context,

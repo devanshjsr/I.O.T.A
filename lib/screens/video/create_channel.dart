@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+import '../../models/caller_model.dart';
 import '../../models/shared_preferences.dart';
 import '../../models/subject_model.dart';
 import '../../services/call.dart';
@@ -122,12 +123,28 @@ class _CreateChannelState extends State<CreateChannel> {
       chnls.add(channelName);
       db.collection('Subjects').doc(docId).update({"channels": chnls});
 
+      //to map firebase uid with agora uid
+      final caller = Caller(
+        callerFirebaseUid: FirebaseAuth.instance.currentUser.uid,
+        channelName: channelName,
+        isStudent: MySharedPreferences.isStudent,
+        callerAgoraUid: null,
+      );
+      Map<String, dynamic> callMap = caller.toMap(caller);
+
+      //add user data to live channels
+      await db
+          .collection('channels')
+          .doc('live')
+          .collection(channelName)
+          .add(callMap);
+
       // await for camera and mic permissions before pushing video page
       await _handleCameraAndMic(Permission.camera);
       await _handleCameraAndMic(Permission.microphone);
       // push video page with given channel name and token
 
-      await Navigator.push(
+      await Navigator.pushReplacement(
         context,
         MaterialPageRoute(
           builder: (context) => CallPage(

@@ -9,6 +9,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../dialog/custom_dialog.dart';
+import '../models/avatar.dart';
+import '../models/caller_model.dart';
 import '../models/shared_preferences.dart';
 import '../models/subject_model.dart';
 import '../styles.dart';
@@ -52,6 +54,7 @@ class _CallPageState extends State<CallPage> {
     // destroy sdk
     _engine.leaveChannel();
     _engine.destroy();
+    CallMethods.liveEnded(_currentUid, widget.channelName);
     super.dispose();
   }
 
@@ -136,13 +139,13 @@ class _CallPageState extends State<CallPage> {
             .collection(widget.channelName)
             .doc(_docId)
             .update({'callerAgoraUid': uid});
-
+        getUserNamesFromAgoraUid();
         setState(() {
           final info = 'onJoinChannel: $channel, uid: $uid';
           _infoStrings.add(info);
           // if (widget.role == ClientRole.Broadcaster) {
           _users.add(uid);
-          _attendees();
+
           // }
         });
       },
@@ -153,11 +156,12 @@ class _CallPageState extends State<CallPage> {
         });
       },
       userJoined: (uid, elapsed) {
+        getUserNamesFromAgoraUid();
         setState(() {
           final info = 'userJoined: $uid';
           _infoStrings.add(info);
           _users.add(uid);
-          _attendees();
+          // Future.delayed(Duration(seconds: 5), getUserNamesFromAgoraUid());
         });
       },
       userOffline: (uid, elapsed) {
@@ -165,6 +169,14 @@ class _CallPageState extends State<CallPage> {
           final info = 'userOffline: $uid';
           _infoStrings.add(info);
           _users.remove(uid);
+          Map<int, dynamic> nMap = Map();
+          for (int i in _users) {
+            if (agoraToFirebaseMap.containsKey(i)) {
+              nMap[i] = agoraToFirebaseMap[i];
+            }
+          }
+          print('New agora Map : $nMap');
+          agoraToFirebaseMap = nMap;
         });
       },
       firstRemoteVideoFrame: (uid, width, height, elapsed) {
@@ -173,14 +185,32 @@ class _CallPageState extends State<CallPage> {
           _infoStrings.add(info);
         });
       },
+      remoteVideoStateChanged: (uid, state, reason, elapsed) {
+        // state = 1 for video starting
+        // state = [0,2,3,4] for video stopped,decoding,frozen,failed
+        debugPrint(
+            'Remote Video State Changed uid : $uid state : $state reason : $reason');
+        setState(() {
+          if (reason == VideoRemoteStateReason.RemoteMuted) {
+            _users.remove(uid);
+            _anonUsers.add(uid);
+          } else if (reason == VideoRemoteStateReason.RemoteUnmuted) {
+            _users.add(uid);
+            _anonUsers.remove(uid);
+          }
+        });
+      },
       connectionStateChanged: (state, reason) async {
         // print('Hellloooo I"m here');
         if (reason == ConnectionChangedReason.TokenExpired) {
           await deleteTokens(
               channelName: widget.channelName, subject: widget.subject);
+          await CallMethods.liveEnded(_currentUid, widget.channelName);
+          // final expired = await CustomDialog.tokenExpireDialog(context);
           setState(() {
             _infoStrings.add('reason : $reason');
             print('reason : $reason');
+            // return expired;
           });
         }
       },
@@ -193,12 +223,22 @@ class _CallPageState extends State<CallPage> {
 
     for (var i = 0; i < _users.length; i++) {
       if (_users[i] == _currentUid) {
-        list.add(RtcLocalView.SurfaceView());
+        if (video) {
+          list.add(RtcLocalView.SurfaceView());
+        } else {
+          list.add(Avatar(uid: _currentUid));
+        }
       } else {
         debugPrint('making remote view for ${_users[i]}');
         list.add(RtcRemoteView.SurfaceView(
           uid: _users[i],
         ));
+      }
+    }
+    print(_anonUsers);
+    if (_anonUsers.isNotEmpty) {
+      for (var i = 0; i < _anonUsers.length; i++) {
+        list.add(Avatar(uid: _anonUsers[i]));
       }
     }
     return list;
@@ -377,6 +417,7 @@ class _CallPageState extends State<CallPage> {
   void _onCallEnd(BuildContext context) {
     Navigator.pop(context);
     Navigator.pop(context);
+    CallMethods.liveEnded(_currentUid, widget.channelName);
   }
 
   void _onToggleMute() {
@@ -411,6 +452,9 @@ class _CallPageState extends State<CallPage> {
           agoraToFirebaseMap[doc.data()['callerAgoraUid']] =
               doc.data()['callerFirebaseUid'];
         }));
+    setState(() {
+      return true;
+    });
     // debugPrint('users list : ' + _users.toString());
     // debugPrint('username list : ' + usernames.toString());
 
@@ -421,46 +465,54 @@ class _CallPageState extends State<CallPage> {
     // }
   }
 
-  final List<Widget> list = [
-    Container(
-      color: CustomStyle.secondaryColor,
-      height: 100,
-      child: Center(
-        child: Text(
-          'Attendees',
-          style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
-        ),
-      ),
-    ),
-  ];
+  List<Widget> list = [];
 
   List<Widget> _attendees() {
     // TODO : Map from agoraToFirebaseMap to usernamesMap
     // Map<int, String> _usernamesMap = Map.of(other);
     // debugPrint('Final usernames $_usernames');
-    getUserNamesFromAgoraUid();
 
     print('users : ' + '$_users');
     print('agoraMap : $agoraToFirebaseMap');
-    _users.forEach(
-      (int uid) => list.add(
-        Padding(
-          padding: EdgeInsets.symmetric(vertical: 5, horizontal: 5),
-          child: ListTile(
-            tileColor: CustomStyle.backgroundColor,
-            leading: Icon(Icons.person),
-            trailing: Icon(Icons.more_vert_sharp),
-            title: Text(
-              agoraToFirebaseMap[uid] ?? 'Updating ...',
-              style: TextStyle(
-                fontSize: 20,
+    print(
+        'map lenght : ${agoraToFirebaseMap.length} and list lenght : ${_users.length}');
+    if (_users.length == 0 ||
+        agoraToFirebaseMap.length != _users.length ||
+        agoraToFirebaseMap.containsKey(null)) {
+      return [Text('Updating list ... ')];
+    } else {
+      list = [
+        Container(
+          color: CustomStyle.secondaryColor,
+          height: 100,
+          child: Center(
+            child: Text(
+              'Attendees',
+              style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
+            ),
+          ),
+        ),
+      ];
+      _users.forEach(
+        (int uid) => list.add(
+          Padding(
+            padding: EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+            child: ListTile(
+              tileColor: CustomStyle.backgroundColor,
+              leading: Icon(Icons.person),
+              trailing: Icon(Icons.more_vert_sharp),
+              title: Text(
+                agoraToFirebaseMap[uid],
+                style: TextStyle(
+                  fontSize: 20,
+                ),
               ),
             ),
           ),
         ),
-      ),
-    );
-    return list;
+      );
+      return list;
+    }
   }
 
   @override
@@ -474,7 +526,7 @@ class _CallPageState extends State<CallPage> {
       endDrawer: Drawer(
         child: ListView(
           padding: EdgeInsets.zero,
-          children: list,
+          children: _attendees(),
         ),
       ),
       backgroundColor: Colors.black,
