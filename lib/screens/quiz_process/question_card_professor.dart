@@ -38,24 +38,60 @@ class _QuestionCardProfessorState extends State<QuestionCardProfessor>
 
   @override
   void initState() {
-    // TODO: implement initState
 
     option1Selected = false;
     option2Selected = false;
     option3Selected = false;
     option4Selected = false;
+
+    String ans = questionModel.correctOption.split(" ")[1];
+    switch (int.parse(ans)) {
+      case (1):
+        setState(() {
+          option1Selected = true;
+          option2Selected = false;
+          option3Selected = false;
+          option4Selected = false;
+        });
+        break;
+      case (2):
+        setState(() {
+          option1Selected = false;
+          option2Selected = true;
+          option3Selected = false;
+          option4Selected = false;
+        });
+        break;
+      case (3):
+        setState(() {
+          option1Selected = false;
+          option2Selected = false;
+          option3Selected = true;
+          option4Selected = false;
+        });
+        break;
+      case (4):
+        setState(() {
+          option1Selected = false;
+          option2Selected = false;
+          option3Selected = false;
+          option4Selected = true;
+        });
+        break;
+      default:
+    }
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    Widget getAnswerCard(String text) {
+    Widget getAnswerCard(bool isSelected, String text, int index) {
       return Container(
         margin: EdgeInsets.symmetric(vertical: 5),
         width: double.infinity,
         child: OutlinedButton(
           style: ElevatedButton.styleFrom(
-            primary: Colors.white,
+            primary: isSelected ? Colors.green : Colors.white,
             side: BorderSide(width: 2, color: Colors.grey),
             padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
             shape: RoundedRectangleBorder(
@@ -107,10 +143,10 @@ class _QuestionCardProfessorState extends State<QuestionCardProfessor>
                         fontSize: 18,
                       ),
                     ),
-                    getAnswerCard(questionModel.option1),
-                    getAnswerCard(questionModel.option2),
-                    getAnswerCard(questionModel.option3),
-                    getAnswerCard(questionModel.option4),
+                    getAnswerCard(option1Selected, questionModel.option1, 1),
+                    getAnswerCard(option2Selected, questionModel.option2, 2),
+                    getAnswerCard(option3Selected, questionModel.option3, 3),
+                    getAnswerCard(option4Selected, questionModel.option4, 4),
                   ],
                 ),
               ),
