@@ -3,6 +3,7 @@ import 'package:iota/dialog/custom_dialog.dart';
 import 'package:iota/models/data_model.dart';
 import 'package:iota/models/subject_model.dart';
 import 'package:iota/screens/student/custom_fab.dart';
+import 'package:iota/screens/subjects/subject_search.dart';
 import 'package:iota/screens/subjects/subject_tile_shimmer.dart';
 import 'package:iota/subjects/subject_tile.dart';
 import 'package:iota/widgets/app_drawer.dart';
@@ -20,14 +21,9 @@ class StudentMainScreen extends StatelessWidget {
         actions: [
           IconButton(
             onPressed: () {
-  
+              Navigator.of(context).pushNamed(SubjectSearchScreen.routeName);
             },
             icon: Icon(Icons.search),
-          ), IconButton(
-            onPressed: () {
-              CustomDialog.showJoinDialog(context);
-            },
-            icon: Icon(Icons.add),
           ),
         
       ],),
