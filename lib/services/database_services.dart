@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class DatabaseServices {
   Future<void> addQuiz(Map quizData, String quizId) async {
@@ -23,8 +24,11 @@ class DatabaseServices {
     });
   }
 
-  getQuizInfo() async {
-    return FirebaseFirestore.instance.collection("Quiz_List").snapshots();
+  getQuizInfo(String subjectId) async {
+    return FirebaseFirestore.instance
+        .collection("Quiz_List")
+        .where("subjectId", isEqualTo: subjectId)
+        .snapshots();
   }
 
   getQuestionList(String quizId) async {
@@ -35,12 +39,37 @@ class DatabaseServices {
         .get();
   }
 
+  // deleteAttemptedQuiz(String quizId) async {
+  //   return await FirebaseFirestore.instance
+  //       .collection("Quiz_List")
+  //       .doc(quizId)
+  //       .delete();
+  // }
+
   Future<void> saveQuiz(Map<String, String> quizMap, String quizId) async {
     await FirebaseFirestore.instance
         .collection("AttemptedQuiz")
         .doc(quizId)
+        .set({"title": quizMap["title"]});
+    await FirebaseFirestore.instance
+        .collection("AttemptedQuiz")
+        .doc(quizId)
+        .collection("StudentResponses")
+        .doc(FirebaseAuth.instance.currentUser.uid)
         .set(quizMap)
         .catchError((e) {
+      print(e.toString());
+    });
+    await saveQuizDetailsInStudentCollection(quizId);
+  }
+
+  Future saveQuizDetailsInStudentCollection(String quizId) async {
+    await FirebaseFirestore.instance
+        .collection("Student")
+        .doc(FirebaseAuth.instance.currentUser.uid)
+        .collection("MyAttemptedQuizzes")
+        .doc(quizId)
+        .set({"quizId": quizId}).catchError((e) {
       print(e.toString());
     });
   }
@@ -49,16 +78,33 @@ class DatabaseServices {
     await FirebaseFirestore.instance
         .collection("AttemptedQuiz")
         .doc(quizId)
+        .collection("StudentResponses")
+        .doc(FirebaseAuth.instance.currentUser.uid)
         .collection(quizId)
         .doc(queId)
         .set(queData)
         .catchError((e) {
       print(e.toString());
     });
+    await saveQuizDetailsInStudentCollection(quizId);
   }
 
-  getAttemptedQuizzes() async {
+  Future<QuerySnapshot> getAttemptedQuizzes() async {
     return FirebaseFirestore.instance.collection("AttemptedQuiz").get();
+  }
+
+  Future<bool> checkIfCurrentStudentAttemptedQuiz(String quizId) async {
+    var data = await FirebaseFirestore.instance
+        .collection("AttemptedQuiz")
+        .doc(quizId)
+        .collection("StudentResponses")
+        .doc(FirebaseAuth.instance.currentUser.uid)
+        .get();
+    if (!data.exists) {
+      return false;
+    } else {
+      return true;
+    }
   }
 
   getAttemptedQuizData(String quizId) async {
@@ -68,12 +114,44 @@ class DatabaseServices {
         .get();
   }
 
-  getAttemptedQuestionList(String quizId) async {
-    //print(quizId);
-    return await FirebaseFirestore.instance
+  Future<QuerySnapshot> getAttemptedQuestionList(String quizId) async {
+    QuerySnapshot res = await FirebaseFirestore.instance
         .collection("AttemptedQuiz")
         .doc(quizId)
+        .collection("StudentResponses")
+        .doc(FirebaseAuth.instance.currentUser.uid)
         .collection(quizId)
         .get();
+    return res;
+  }
+
+  Future<DocumentSnapshot> getAttemptedQuesInfo(
+      String quizId, String questionId) async {
+    DocumentSnapshot data = await FirebaseFirestore.instance
+        .collection("AttemptedQuiz")
+        .doc(quizId)
+        .collection("StudentResponses")
+        .doc(FirebaseAuth.instance.currentUser.uid)
+        .collection(quizId)
+        .doc(questionId)
+        .get();
+    print("AAA" + data.data().toString());
+    return data;
+  }
+
+  Future<List<DocumentSnapshot>> getSubjectQuizzes(String subjectId) async {
+    List<DocumentSnapshot> res = [];
+    QuerySnapshot quizInfo =
+        await FirebaseFirestore.instance.collection("Quiz_List").get();
+    for (int i = 0; i < quizInfo.docs.length; i++) {
+      String quizId = quizInfo.docs[i].id;
+
+      DocumentSnapshot value = await getAttemptedQuizData(quizId);
+      String currentId = value.data()["subjectId"];
+      if (currentId.compareTo(subjectId) == 0) {
+        res.add(value);
+      }
+    }
+    return res;
   }
 }
