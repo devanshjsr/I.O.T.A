@@ -45,7 +45,10 @@ dev_dependencies:
   shared_preferences: ^2.0.4
   animated_splash_screen: ^1.1.0
   shimmer: ^1.1.2
+  
+  flutter_multiselect: 0.0.1
 
+  random_string: ^2.1.0
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 

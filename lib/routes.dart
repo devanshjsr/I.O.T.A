@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:iota/screens/professor/add_subjects.dart';
 
 import 'screens/auth/faculty_signup_screen.dart';
 import 'screens/auth/login_screen.dart';
@@ -16,4 +17,6 @@ Map<String, WidgetBuilder> routes = {
   FacultySignUpScreen.routeName: (ctx) => FacultySignUpScreen(),
   StudentMainScreen.routeName: (ctx) => StudentMainScreen(),
   ProfessorMainScreen.routeName: (ctx) => ProfessorMainScreen(),
+
+  AddSubjects.routeName : (ctx) => AddSubjects(),
 };

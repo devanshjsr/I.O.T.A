@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:iota/models/subject_model.dart';
 import 'package:provider/provider.dart';
 
 import 'animated_splash.dart';
@@ -28,6 +29,9 @@ class MyApp extends StatelessWidget {
         Provider<AuthProvider>(
           create: (_) => AuthProvider(FirebaseAuth.instance),
         ),
+        Provider<SubjectProvider>(
+          create: (_) => SubjectProvider(),
+          ),
         StreamProvider(
           create: (ctx) => ctx.read<AuthProvider>().authStateChanges,
         ),
