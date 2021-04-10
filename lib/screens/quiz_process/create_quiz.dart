@@ -6,8 +6,11 @@ import '../../models/data_model.dart';
 import '../../services/database_services.dart';
 import '../../styles.dart';
 import 'add_questions.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class CreateQuiz extends StatefulWidget {
+  final String subjectId;
+  CreateQuiz(this.subjectId);
   static const routeName = "/create_quiz_screen";
 
   @override
@@ -59,6 +62,39 @@ class _CreateQuizState extends State<CreateQuiz> {
     }
   }
 
+  bool isOkay = true;
+
+  Future<bool> checkClash() async {
+    QuerySnapshot quizList =
+        await FirebaseFirestore.instance.collection("Quiz_List").get();
+
+    for (int i = 0; i < quizList.docs.length; i++) {
+      DocumentSnapshot currQuiz = await FirebaseFirestore.instance
+          .collection("Quiz_List")
+          .doc(quizList.docs[i].id)
+          .get();
+      String dur = currQuiz.data()["durationInMins"];
+      //print(currQuiz.data().toString());
+      DateTime dateTime = DateTime.parse(currQuiz.data()["dateTime"]);
+      DateTime endVal = dateTime.add(Duration(minutes: (5 + int.parse(dur))));
+      DateTime startVal = dateTime.subtract(Duration(minutes: (5)));
+
+      String endValStr = endVal.toIso8601String().substring(0, 19);
+      String startValStr = startVal.toIso8601String().substring(0, 19);
+      String endDateTime = DateTime.parse(startDateTime)
+          .add(Duration(minutes: int.parse(duration)))
+          .toIso8601String()
+          .substring(0, 19);
+
+      if (endValStr.compareTo(startDateTime.substring(0, 19)) < 0 ||
+          startValStr.compareTo(endDateTime) > 0) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+  }
+
   void add() async {
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
@@ -78,6 +114,7 @@ class _CreateQuizState extends State<CreateQuiz> {
 
         quizId = randomAlphaNumeric(11);
         Map<String, String> dataMap = {
+          "subjectId": widget.subjectId,
           "quizId": quizId,
           "title": quizTitle,
           "dateTime": startDateTime,
@@ -85,13 +122,10 @@ class _CreateQuizState extends State<CreateQuiz> {
           "totalQuestions": totalQuestions
         };
 
-        //await dbs.addQuiz(dataMap, quizId);
-
         setState(() {
           _loadingIndicator = false;
           Navigator.pushReplacement(context,
               MaterialPageRoute(builder: (context) => AddQuestions(dataMap)));
-          //Navigator.of(context).pushNamed(AddQuestions.routeName, arguments: dataMap); //updated
         });
       }
     }
@@ -223,7 +257,38 @@ class _CreateQuizState extends State<CreateQuiz> {
                           child: ElevatedButton(
                             style: CustomStyle.customElevatedButtonStyle(),
                             onPressed: () {
-                              add();
+                              bool val;
+                              checkClash().then((value) {
+                                setState(() {
+                                  val = value;
+                                });
+                                val
+                                    ? add()
+                                    : showDialog(
+                                        context: context,
+                                        builder: (context) => AlertDialog(
+                                          title: Text(
+                                            "Attention!",
+                                            style: TextStyle(
+                                                color: Colors.red,
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                          titleTextStyle:
+                                              TextStyle(color: Colors.red),
+                                          content: Text(
+                                              "Your time is clashing with some other Quiz"),
+                                          contentTextStyle:
+                                              TextStyle(color: Colors.blueGrey),
+                                          actions: <Widget>[
+                                            TextButton(
+                                                onPressed: () {
+                                                  Navigator.pop(context);
+                                                },
+                                                child: Text("Ok")),
+                                          ],
+                                        ),
+                                      );
+                              });
                             },
                             child: Text(
                               'Create Quiz',
