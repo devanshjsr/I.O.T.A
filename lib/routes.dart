@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:iota/assignment/add_assignment.dart';
 import 'package:iota/assignment/view_assignment.dart';
+import 'package:iota/screens/room/add_students.dart';
+import 'package:iota/screens/room/create_room.dart';
+import 'package:iota/screens/room/remove_member.dart';
+import 'package:iota/screens/room/view_room.dart';
 
 import 'screens/auth/faculty_signup_screen.dart';
 import 'screens/auth/login_screen.dart';
@@ -27,6 +31,12 @@ Map<String, WidgetBuilder> routes = {
   
   AddAssignment.routeName : (ctx) => AddAssignment(),
   ViewAssignment.routeName : (ctx) => ViewAssignment(),
+  
+  //Room
+  AddStudents.routeName : (ctx) => AddStudents(),
+  ViewRoom.routeName : (ctx) => ViewRoom(),
+  CreateRoom.routeName : (ctx) => CreateRoom(),
+  RemoveMember.routeName : (ctx) => RemoveMember(),
   //  Subjects
   SubjectBottomNavBar.routeName: (ctx) => SubjectBottomNavBar(),
   SubjectSettings.routeName: (ctx) => SubjectSettings(),
