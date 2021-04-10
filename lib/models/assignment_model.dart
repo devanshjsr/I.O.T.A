@@ -1,9 +1,12 @@
-import 'package:flutter/cupertino.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:iota/models/subject_model.dart';
-import 'package:iota/models/submission_model.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+
+import 'subject_model.dart';
+import 'submission_model.dart';
+
 class Assignment {
   final String id;
   final String name;
@@ -17,25 +20,23 @@ class Assignment {
       this.description,
       @required this.dueDate,
       @required this.url});
-  
-    static Future<String> fetchMyWork(Assignment assignment) async{
+
+  static Future<String> fetchMyWork(Assignment assignment) async {
     DocumentSnapshot doc = await FirebaseFirestore.instance
-                                .collection("Assignment")
-                                .doc(assignment.id)
-                                .collection("list_of_submissions")
-                                .doc(FirebaseAuth.instance.currentUser.uid)
-                                .get();
+        .collection("Assignment")
+        .doc(assignment.id)
+        .collection("list_of_submissions")
+        .doc(FirebaseAuth.instance.currentUser.uid)
+        .get();
 
     return doc.data()["url_of_submitted_pdf"];
   }
 }
 
-
 class AssignmentProvider with ChangeNotifier {
   List<Assignment> _onGoingAssignments = [];
 
   List<Assignment> _completedAssignments = [];
-
 
   List<Assignment> _studentPendingAssignment = [];
   List<Assignment> _studentSubmittedAssignment = [];
@@ -55,47 +56,12 @@ class AssignmentProvider with ChangeNotifier {
   List<Assignment> get getCompletedAssignment {
     return [..._completedAssignments];
   }
-  
+
   List<Submission> _submittedAssignment = [];
 
   List<Submission> get getSubmittedAssignmentProfessor {
     return [..._submittedAssignment];
   }
-
-
-
-
-  //Upload the assignmentwork done by student
-  Future<void> uploadAssignmentWork(
-      List<int> asset, Assignment assignment, String name) async {
-    StorageReference reference = FirebaseStorage.instance
-        .ref()
-        .child("Assignment Submissions")
-        .child(name);
-
-    StorageUploadTask uploadTask = reference.putData(asset);
-    String url = await (await uploadTask.onComplete).ref.getDownloadURL();
-    print(url);
-
-    String uid = FirebaseAuth.instance.currentUser.uid;
-    Map<String, String> submittedAssignment = {
-      "url_of_submitted_pdf": url,
-      "submission time": DateTime.now().toIso8601String(),
-    };
-
-    await FirebaseFirestore.instance
-        .collection("Assignment")
-        .doc(assignment.id)
-        .collection("list_of_submissions")
-        .doc(uid)
-        .set(submittedAssignment);
-    
-    _studentPendingAssignment.remove(assignment);
-    _studentSubmittedAssignment.add(assignment);
-
-    notifyListeners();
-  }
-  
   //Upload the assignment added by professor
 
   Future<void> uploadAssignment(Subject subject, Map<String, String> assignment,
@@ -141,93 +107,16 @@ class AssignmentProvider with ChangeNotifier {
           .set(assignmentId);
     }
 
-
-
-      
     Assignment newAssignment = Assignment(
-      id: docRef.id,name: 
-      assignment["name"],
-      description: assignment["description"],
-      dueDate: assignment["due date"],
-      url: assignment["url_of_question_pdf"]);
+        id: docRef.id,
+        name: assignment["name"],
+        description: assignment["description"],
+        dueDate: assignment["due date"],
+        url: assignment["url_of_question_pdf"]);
     _onGoingAssignments.add(newAssignment);
 
     notifyListeners();
   }
-
-
-  Future<void> deleteUploadedAssignment(Assignment assignment) async {
-    String url = assignment.url;
-    StorageReference pdfRef = await FirebaseStorage.instance
-        .ref()
-        .getStorage()
-        .getReferenceFromUrl(url);
-
-    try {
-      pdfRef.delete();
-      print("File Succesfully Removed");
-    } catch (error) {
-      throw Error;
-    }
-
-    await FirebaseFirestore.instance
-        .collection("Assignment")
-        .doc(assignment.id)
-        .collection("list_of_submissions")
-        .doc(FirebaseAuth.instance.currentUser.uid)
-        .delete();
-    
-    _studentSubmittedAssignment.remove(assignment);
-    _studentPendingAssignment.add(assignment);
-    
-    notifyListeners();
-  }
-
-  Future<void> changeDeadline(Assignment assignment, String newDeadline) async {
-    await FirebaseFirestore.instance
-        .collection("Assignment")
-        .doc(assignment.id)
-        .update({"due date": newDeadline});
-
-    notifyListeners();
-  }
-
-
-  Future<void> fetchSubmittedAssignments(Assignment assignment) async {
-    var allSubmittedAssignment = await FirebaseFirestore.instance
-        .collection("Assignment")
-        .doc(assignment.id)
-        .collection("list_of_submissions")
-        .get();
-
-    List<Submission> _tempSubmission = [];
-    for (var element in allSubmittedAssignment.docs) {
-      String uid = element.id;
-
-      var myDate = await FirebaseFirestore.instance
-          .collection("Student")
-          .doc(uid)
-          .collection("MyData")
-          .get();
-
-      String name = "";
-      for (var user in myDate.docs) {
-        name = await user.data()["name"];
-      }
-
-      String time = element.data()["submission time"];
-      Submission newSubmission = Submission(
-          id: element.id,
-          url: element.data()["url_of_submitted_pdf"],
-          submissionTime: DateTime.parse(time),
-          name: name);
-      _tempSubmission.add(newSubmission);
-    }
-
-    _submittedAssignment = _tempSubmission;
-    notifyListeners();
-  }
-  
 
   //Fetch all the assignments for the professor
   Future<void> fetchAssignmentsProfessor(Subject subject) async {
@@ -321,5 +210,104 @@ class AssignmentProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  //Upload the assignmentwork done by student
+  Future<void> uploadAssignmentWork(
+      List<int> asset, Assignment assignment, String name) async {
+    StorageReference reference = FirebaseStorage.instance
+        .ref()
+        .child("Assignment Submissions")
+        .child(name);
 
+    StorageUploadTask uploadTask = reference.putData(asset);
+    String url = await (await uploadTask.onComplete).ref.getDownloadURL();
+    print(url);
+
+    String uid = FirebaseAuth.instance.currentUser.uid;
+    Map<String, String> submittedAssignment = {
+      "url_of_submitted_pdf": url,
+      "submission time": DateTime.now().toIso8601String(),
+    };
+
+    await FirebaseFirestore.instance
+        .collection("Assignment")
+        .doc(assignment.id)
+        .collection("list_of_submissions")
+        .doc(uid)
+        .set(submittedAssignment);
+
+    _studentPendingAssignment.remove(assignment);
+    _studentSubmittedAssignment.add(assignment);
+
+    notifyListeners();
+  }
+
+  Future<void> fetchSubmittedAssignments(Assignment assignment) async {
+    var allSubmittedAssignment = await FirebaseFirestore.instance
+        .collection("Assignment")
+        .doc(assignment.id)
+        .collection("list_of_submissions")
+        .get();
+
+    List<Submission> _tempSubmission = [];
+    for (var element in allSubmittedAssignment.docs) {
+      String uid = element.id;
+
+      var myDate = await FirebaseFirestore.instance
+          .collection("Student")
+          .doc(uid)
+          .collection("MyData")
+          .get();
+
+      String name = "";
+      for (var user in myDate.docs) {
+        name = await user.data()["name"];
+      }
+
+      String time = element.data()["submission time"];
+      Submission newSubmission = Submission(
+          id: element.id,
+          url: element.data()["url_of_submitted_pdf"],
+          submissionTime: DateTime.parse(time),
+          name: name);
+      _tempSubmission.add(newSubmission);
+    }
+
+    _submittedAssignment = _tempSubmission;
+    notifyListeners();
+  }
+
+  Future<void> deleteUploadedAssignment(Assignment assignment) async {
+    String url = assignment.url;
+    StorageReference pdfRef = await FirebaseStorage.instance
+        .ref()
+        .getStorage()
+        .getReferenceFromUrl(url);
+
+    try {
+      pdfRef.delete();
+      print("File Succesfully Removed");
+    } catch (error) {
+      throw Error;
+    }
+
+    await FirebaseFirestore.instance
+        .collection("Assignment")
+        .doc(assignment.id)
+        .collection("list_of_submissions")
+        .doc(FirebaseAuth.instance.currentUser.uid)
+        .delete();
+
+    _studentSubmittedAssignment.remove(assignment);
+    _studentPendingAssignment.add(assignment);
+    notifyListeners();
+  }
+
+  Future<void> changeDeadline(Assignment assignment, String newDeadline) async {
+    await FirebaseFirestore.instance
+        .collection("Assignment")
+        .doc(assignment.id)
+        .update({"due date": newDeadline});
+
+    notifyListeners();
+  }
 }

@@ -60,6 +60,11 @@ class DataModel {
   static const DEADLINE_PASSED = "Sorry Deadline Already Passed";
   static const DEADLINE_CHANGED = "Dealine Changed";
   //Subject
+
+  //Room
+  static const ROOM_NAME = "Enter Room Name";
+  static const ROOM_DESC = "Enter Room Desc";
+  static const ROOM_TOAST = "New Room Added";
   static const ADD_SUBJECT = "Add Subject";
   static const BRANCH = "Branch";
   static const INVALID_BRANCH = "Invalid Branch";

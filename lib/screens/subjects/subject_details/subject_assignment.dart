@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
 
-import 'package:iota/assignment/add_assignment.dart';
-import 'package:iota/assignment/assignment_tile.dart';
 import 'package:iota/models/assignment_model.dart';
+import 'package:iota/screens/assignments/add_assignment.dart';
+import 'package:iota/screens/assignments/assignment_tile.dart';
 import 'package:provider/provider.dart';
 
 import '../../../models/data_model.dart';
 import '../../../models/shared_preferences.dart';
 import '../../../models/subject_model.dart';
 import '../../../styles.dart';
-
 
 class SubjectAssignment extends StatelessWidget {
   @override

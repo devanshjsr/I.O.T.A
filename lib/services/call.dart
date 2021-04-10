@@ -8,7 +8,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-import '../dialog/custom_dialog.dart';
 import '../models/avatar.dart';
 import '../models/caller_model.dart';
 import '../models/shared_preferences.dart';

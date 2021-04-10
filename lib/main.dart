@@ -1,13 +1,15 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:iota/models/assignment_model.dart';
-import 'package:iota/models/subject_model.dart';
 import 'package:provider/provider.dart';
 
+import '/models/assignment_model.dart';
+import '/models/room_model.dart';
 import 'animated_splash.dart';
 import 'models/auth_provider.dart';
+import 'models/fcm_provider.dart';
 import 'models/shared_preferences.dart';
+import 'models/subject_model.dart';
 import 'routes.dart';
 import 'screens/auth/welcome_screen.dart';
 import 'screens/professor/professor_main_screen.dart';
@@ -27,22 +29,28 @@ class MyApp extends StatelessWidget {
 
     return MultiProvider(
       providers: [
+        ChangeNotifierProvider(
+          create: (_) => SubjectProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => AssignmentProvider(),
+        ),
         Provider<AuthProvider>(
           create: (_) => AuthProvider(FirebaseAuth.instance),
         ),
-        Provider<SubjectProvider>(
-          create: (_) => SubjectProvider(),
-          ),
         StreamProvider(
           create: (ctx) => ctx.read<AuthProvider>().authStateChanges,
         ),
-        Provider<AssignmentProvider>(
-          create: (_) => AssignmentProvider(),
-          )
+        ChangeNotifierProvider(
+          create: (_) => FcmProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => RoomProvider(),
+        ),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        title: "IOTA",
+        title: "Quiz App",
         theme: ThemeData(
           scaffoldBackgroundColor: CustomStyle.backgroundColor,
           primarySwatch: Colors.blue,
@@ -69,6 +77,8 @@ class MyApp extends StatelessWidget {
 class AuthenticationWrapper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    //  initialize the fcm provider
+    Provider.of<FcmProvider>(context, listen: false).initialize();
     //  To check whether user is logged in before or not
     final _firebaseUser = context.watch<User>();
     if (_firebaseUser == null)

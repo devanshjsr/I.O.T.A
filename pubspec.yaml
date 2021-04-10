@@ -61,6 +61,8 @@ dev_dependencies:
   
   url_launcher: ^6.0.2
   file_picker: ^1.13.3
+  
+  firebase_messaging: ^7.0.3
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 

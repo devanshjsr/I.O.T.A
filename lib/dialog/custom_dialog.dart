@@ -1,19 +1,28 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:iota/assignment/view_assignment.dart';
-import 'package:iota/assignment/view_assignment_argument.dart';
-import 'package:iota/assignment/view_submission.dart';
-import 'package:iota/models/assignment_model.dart';
-import 'package:iota/models/data_model.dart';
 import 'package:provider/provider.dart';
 import 'package:share/share.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+import '../models/assignment_model.dart';
 import '../models/auth_provider.dart';
+import '../models/data_model.dart';
+import '../models/room_model.dart';
+import '../models/shared_preferences.dart';
 import '../models/subject_model.dart';
+import '../screens/assignments/view_assignment.dart';
+import '../screens/assignments/view_assignment_argument.dart';
+import '../screens/assignments/view_submission.dart';
+import '../screens/room/add_students.dart';
+import '../screens/room/create_room.dart';
+import '../screens/room/remove_member.dart';
+import '../screens/room/view_room.dart';
+import '../screens/video/create_channel.dart';
 import '../services/dynamic_link_service.dart';
 import '../styles.dart';
-import 'package:url_launcher/url_launcher.dart';
+
 //  Class to store all the custom error-dialog to reduce boilerplate code
 class CustomDialog {
   //  General error dialog if anything goes wrong
@@ -55,55 +64,182 @@ class CustomDialog {
     );
   }
 
-  //  Options to be shown to student and faculty when clicking on options/long press on subject tile
-  static void showOptionDialog(
-      BuildContext context, Subject subject, bool isStudent, Offset offset) {
-    double left = offset.dx;
-    double top = offset.dy;
-    List<PopupMenuEntry<int>> options = isStudent
-        ? [
-            PopupMenuItem(
-              value: 2,
-              textStyle: TextStyle(color: CustomStyle.errorColor),
-              child: GestureDetector(
-                  onTap: () {
-                    Navigator.pop(context);
-                  },
-                  child: Text("Leave")),
+  //  Alert dialog to send password verification link to email
+  static Future<bool> resetPasswordDialog(BuildContext context) async {
+    final _textController = TextEditingController();
+    return await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text(
+            "Forgot password?",
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
             ),
-          ]
-        : [
-            PopupMenuItem(
-              value: 1,
-              child: GestureDetector(
-                  onTap: () {
-                    subjectShareDialog(context, subject, false);
-                  },
-                  child: Text("Share")),
-            ),
-            PopupMenuItem(
-              value: 2,
-              child: GestureDetector(
-                  onTap: () {
-                    Navigator.pop(context);
-                  },
-                  child: Text("Edit")),
-            ),
-            PopupMenuItem(
-              value: 3,
-              textStyle: TextStyle(color: CustomStyle.errorColor),
-              child: GestureDetector(
-                onTap: () {
-                  Navigator.of(context).pop();
-                },
-                child: Text("Delete"),
+          ),
+          content:
+              const Text("Enter your e-mail to receive password reset link."),
+          actions: <Widget>[
+            Container(
+              width: MediaQuery.of(context).size.width,
+              child: TextField(
+                decoration:
+                    CustomStyle.customTextFieldDecoration(labelText: "E-mail"),
+                controller: _textController,
+                keyboardType: TextInputType.emailAddress,
               ),
             ),
-          ];
-    showMenu(
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 16),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  ElevatedButton(
+                    style: CustomStyle.customElevatedButtonStyle(),
+                    onPressed: () {
+                      if (_textController.text.trim() == "") {
+                        Fluttertoast.showToast(msg: "Please provide email");
+                        return;
+                      }
+                      Provider.of<AuthProvider>(context, listen: false)
+                          .resetPassword(_textController.text)
+                          .then((value) {
+                        Navigator.of(context).pop(true);
+                      });
+                    },
+                    child: const Text("CONFIRM"),
+                  ),
+                  ElevatedButton(
+                    style: CustomStyle.customElevatedButtonStyle(isError: true),
+                    onPressed: () => Navigator.of(context).pop(false),
+                    child: const Text("CANCEL"),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  static Future tokenExpireDialog(BuildContext context) async {
+    return showDialog(
       context: context,
-      position: RelativeRect.fromLTRB(left, top, 10, 10),
-      items: options,
+      barrierDismissible: false,
+      builder: (ctx) => AlertDialog(
+        title: Text(
+          'Token Expired',
+          style: TextStyle(
+              fontWeight: FontWeight.bold, color: CustomStyle.primaryColor),
+        ),
+        content: Text(
+          'Create a new channel or end the call',
+          style: TextStyle(color: CustomStyle.primaryColor),
+        ),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 16),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    Navigator.of(context).pop();
+                    Navigator.of(context).pop();
+                    Navigator.of(context).pushNamed(CreateChannel.routeName);
+                  },
+                  child: Text(
+                    'Create Channel',
+                    style: CustomStyle.customButtonTextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      size: 14,
+                    ),
+                  ),
+                  style: CustomStyle.customElevatedButtonStyle(),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    Navigator.of(context).pop();
+                    Navigator.of(context).pop();
+                  },
+                  child: Text(
+                    'End',
+                    style: CustomStyle.customButtonTextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      size: 14,
+                    ),
+                  ),
+                  style: CustomStyle.customElevatedButtonStyle(isError: true),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  static Future noChannelDialog(BuildContext context) async {
+    var isStudent = MySharedPreferences.isStudent;
+    return showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(
+          'Channel not present',
+          style: TextStyle(
+              fontWeight: FontWeight.bold, color: CustomStyle.primaryColor),
+        ),
+        content: Text(
+          isStudent ? 'Return Home' : 'Create a new channel or return Home',
+          style: TextStyle(color: CustomStyle.primaryColor),
+        ),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 16),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                if (!isStudent)
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      Navigator.of(context).pop();
+                      Navigator.of(context).pushNamed(CreateChannel.routeName);
+                    },
+                    child: Text(
+                      'Create Channel',
+                      style: CustomStyle.customButtonTextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          size: 14),
+                    ),
+                    style: CustomStyle.customElevatedButtonStyle(),
+                  ),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    Navigator.of(context).pop();
+                  },
+                  child: Text(
+                    'Home',
+                    style: CustomStyle.customButtonTextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      size: 14,
+                    ),
+                  ),
+                  style: CustomStyle.customElevatedButtonStyle(),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -277,7 +413,55 @@ class CustomDialog {
         });
   }
 
-   static Future showJoinDialog(BuildContext context) {
+  //  Options to be shown to student and faculty when clicking on options/long press on subject tile
+  static void showOptionDialog(
+      BuildContext context, Subject subject, bool isStudent, Offset offset) {
+    double left = offset.dx;
+    double top = offset.dy;
+    List<PopupMenuEntry<int>> options = isStudent
+        ? [
+            PopupMenuItem(
+              value: 2,
+              textStyle: TextStyle(color: CustomStyle.errorColor),
+              child: GestureDetector(onTap: () {}, child: Text("Leave")),
+            ),
+          ]
+        : [
+            PopupMenuItem(
+              value: 1,
+              child: GestureDetector(
+                  onTap: () {
+                    subjectShareDialog(context, subject, false);
+                  },
+                  child: Text("Share")),
+            ),
+            PopupMenuItem(
+              value: 2,
+              child: GestureDetector(
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
+                  child: Text("Edit")),
+            ),
+            PopupMenuItem(
+              value: 3,
+              textStyle: TextStyle(color: CustomStyle.errorColor),
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text("Delete"),
+              ),
+            ),
+          ];
+    showMenu(
+      context: context,
+      position: RelativeRect.fromLTRB(left, top, 10, 10),
+      items: options,
+    );
+  }
+
+  static Future showJoinDialog(BuildContext context) {
     final _formKey = GlobalKey<FormState>();
     // Map<String, String> _docRef = {
     //   'subject_code': "",
@@ -290,7 +474,11 @@ class CustomDialog {
       if (isValid) {
         _formKey.currentState.save();
         Provider.of<SubjectProvider>(context, listen: false)
-            .joinSubjectUsingCode(subjectCode, name, uid)
+            .joinSubjectUsingCode(
+          subjectCode,
+          name,
+          uid,
+        )
             .catchError((error) {
           String snackBarContent;
           if (error == "NOT FOUND") {
@@ -312,7 +500,8 @@ class CustomDialog {
         }).then((value) => Navigator.of(context).pop());
       }
     }
-  return showDialog(
+
+    return showDialog(
         context: context,
         builder: (_) {
           return AlertDialog(
@@ -368,67 +557,7 @@ class CustomDialog {
         });
   }
 
-
-  //  Alert dialog to send password verification link to email
-  static Future<bool> resetPasswordDialog(BuildContext context) async {
-    final _textController = TextEditingController();
-    return await showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text(
-            "Forgot password?",
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          content:
-              const Text("Enter your e-mail to receive password reset link."),
-          actions: <Widget>[
-            Container(
-              width: MediaQuery.of(context).size.width,
-              child: TextField(
-                decoration:
-                    CustomStyle.customTextFieldDecoration(labelText: "E-mail"),
-                controller: _textController,
-                keyboardType: TextInputType.emailAddress,
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 16),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  ElevatedButton(
-                    style: CustomStyle.customElevatedButtonStyle(),
-                    onPressed: () {
-                      if (_textController.text.trim() == "") {
-                        Fluttertoast.showToast(msg: "Please provide email");
-                        return;
-                      }
-                      Provider.of<AuthProvider>(context, listen: false)
-                          .resetPassword(_textController.text)
-                          .then((value) {
-                        Navigator.of(context).pop(true);
-                      });
-                    },
-                    child: const Text("CONFIRM"),
-                  ),
-                  ElevatedButton(
-                    style: CustomStyle.customElevatedButtonStyle(isError: true),
-                    onPressed: () => Navigator.of(context).pop(false),
-                    child: const Text("CANCEL"),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-   static void showAssignmentDialog(
+  static void showAssignmentDialog(
       BuildContext context, Offset offset, Assignment assignment, String type) {
     double left = offset.dx;
     double top = offset.dy;
@@ -461,7 +590,8 @@ class CustomDialog {
       items: options,
     );
   }
- static void showDownloadDialog(
+
+  static void showDownloadDialog(
       BuildContext context, Offset offset, String url) {
     double left = offset.dx;
     double top = offset.dy;
@@ -486,5 +616,81 @@ class CustomDialog {
     );
   }
 
+  static void showRoomDialog(
+      BuildContext context, Offset offset, Subject subject) {
+    double left = offset.dx;
+    double top = offset.dy;
 
+    List<PopupMenuEntry<int>> options = [
+      PopupMenuItem(
+        value: 1,
+        child: GestureDetector(
+            onTap: () {
+              Navigator.of(context).pop();
+              Navigator.of(context)
+                  .pushNamed(CreateRoom.routeName, arguments: subject);
+            },
+            child: Text("Create Room")),
+      ),
+      PopupMenuItem(
+        value: 1,
+        child: GestureDetector(
+            onTap: () {
+              Navigator.of(context).pop();
+              Navigator.of(context)
+                  .pushNamed(ViewRoom.routeName, arguments: subject);
+            },
+            child: Text("View Room")),
+      ),
+    ];
+    showMenu(
+      context: context,
+      position: RelativeRect.fromLTRB(left, top, 10, 10),
+      items: options,
+    );
+  }
+
+  static void showRoomOptionDialog(
+      BuildContext context, Offset offset, Room room) {
+    double left = offset.dx;
+    double top = offset.dy;
+
+    List<PopupMenuEntry<int>> options = [
+      PopupMenuItem(
+        value: 1,
+        child: GestureDetector(
+            onTap: () {
+              Navigator.of(context).pop();
+              Navigator.of(context)
+                  .pushNamed(AddStudents.routeName, arguments: room);
+            },
+            child: Text("Add Member")),
+      ),
+      PopupMenuItem(
+        value: 1,
+        child: GestureDetector(
+            onTap: () {
+              Navigator.of(context).pop();
+              Navigator.of(context)
+                  .pushNamed(RemoveMember.routeName, arguments: room);
+            },
+            child: Text("Remove Member")),
+      ),
+      PopupMenuItem(
+        value: 1,
+        child: GestureDetector(
+            onTap: () async {
+              await Provider.of<RoomProvider>(context, listen: false)
+                  .removeRoom(room);
+              Navigator.of(context).pop();
+            },
+            child: Text("Remove Room")),
+      ),
+    ];
+    showMenu(
+      context: context,
+      position: RelativeRect.fromLTRB(left, top, 10, 10),
+      items: options,
+    );
+  }
 }
