@@ -1,7 +1,13 @@
-# iota
+# I.O.T.A
 Interactive Online Test Application.
 
-## Getting Started
+## Project is made for the hack 36 
+## Team Name - 36 ka Aakda
+### Team Members - 
+#### 1. AANCHAL SINGH (Leader)
+#### 2. ADITYA SHARMA
+#### 3. ANIMESH KUMAR
+#### 4. DEVANSH SHUKLA 
 
 This project is a starting point for a Flutter application.
 
