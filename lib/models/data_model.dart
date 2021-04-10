@@ -1,5 +1,7 @@
 // Data model to store all the strings
 
+import 'package:flutter/cupertino.dart';
+
 class DataModel {
   //  Login and signup
   static const SIGNUP = "Sign Up ?";
@@ -32,4 +34,26 @@ class DataModel {
   static const PASSWORD_DONT_MATCH = "Passwords do not match!";
   static const ENTER_MOBILE_NUMBER = "Please enter mobile number";
   static const ENTER_VALID_MOBILE_NUMBER = "Please enter valid mobile number";
+  static const SOMETHING_WENT_WRONG =
+      "Something went wrong\n Please try again later.";
+
+ //  App drawer specific constants
+  static const HOME = "Home";
+  static const CONTACT_US = "Contact Us";
+  static const MY_PROFILE = "My Profile";
+
+  //video things
+  static const VIDEO_CALL = "Video Call";
+
+  static const ADD_DEADLINE = "Please choose deadline";
+
+  //Subject
+  static const ADD_SUBJECT = "Add Subject";
+  static const BRANCH = "Branch";
+  static const INVALID_BRANCH = "Invalid Branch";
+  static const SUBJECT_TOAST = "New Subject Added";
+  static const SUBJECT_NAME = "Enter Subject Name";
+  static const SUBJECT_DESCRIPTION = "Enter Subject Description";
+  static const REQUIRED = "Required Field";
+  static const INVALID_DESCRIPTION = "Description must be at least 20 char long ";
 }

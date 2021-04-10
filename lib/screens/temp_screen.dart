@@ -1,7 +1,6 @@
 //import 'package:QuizApp/screens/quiz_process/attempted_quizzes.dart';
 
 import 'quiz_process/create_quiz.dart';
-import 'quiz_process/show_quizzes.dart';
 import '../widgets/app_drawer.dart';
 import 'package:flutter/material.dart';
 
@@ -27,8 +26,7 @@ class Temp extends StatelessWidget {
                 primary: Theme.of(context).errorColor,
               ),
               onPressed: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => ShowQuizzes()));
+
               },
               icon: Icon(Icons.dashboard_customize),
               label: Text("Attempt Quiz"),

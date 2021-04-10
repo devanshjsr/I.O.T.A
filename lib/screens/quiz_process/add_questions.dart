@@ -248,7 +248,7 @@ class _QuestionInfoState extends State<QuestionInfo>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return Scaffold()
+    return Scaffold();
     
   }
 }
