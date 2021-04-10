@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:iota/assignment/view_assignment.dart';
+import 'package:iota/assignment/view_assignment_argument.dart';
+import 'package:iota/assignment/view_submission.dart';
+import 'package:iota/models/assignment_model.dart';
 import 'package:iota/models/data_model.dart';
 import 'package:provider/provider.dart';
 import 'package:share/share.dart';
@@ -9,7 +13,7 @@ import '../models/auth_provider.dart';
 import '../models/subject_model.dart';
 import '../services/dynamic_link_service.dart';
 import '../styles.dart';
-
+import 'package:url_launcher/url_launcher.dart';
 //  Class to store all the custom error-dialog to reduce boilerplate code
 class CustomDialog {
   //  General error dialog if anything goes wrong
@@ -423,4 +427,64 @@ class CustomDialog {
       },
     );
   }
+
+   static void showAssignmentDialog(
+      BuildContext context, Offset offset, Assignment assignment, String type) {
+    double left = offset.dx;
+    double top = offset.dy;
+
+    List<PopupMenuEntry<int>> options = [
+      PopupMenuItem(
+        value: 1,
+        child: GestureDetector(
+            onTap: () {
+              Navigator.of(context).pushNamed(ViewAssignment.routeName,
+                  arguments:
+                      AssignmentArgument(assignment: assignment, type: type));
+            },
+            child: Text("View Assignment")),
+      ),
+      PopupMenuItem(
+        value: 2,
+        child: GestureDetector(
+            onTap: () {
+              Navigator.of(context)
+                  .pushNamed(ViewSubmission.routeName, arguments: assignment);
+            },
+            child: Text("Submissions")),
+      ),
+    ];
+
+    showMenu(
+      context: context,
+      position: RelativeRect.fromLTRB(left, top, 10, 10),
+      items: options,
+    );
+  }
+ static void showDownloadDialog(
+      BuildContext context, Offset offset, String url) {
+    double left = offset.dx;
+    double top = offset.dy;
+
+    List<PopupMenuEntry<int>> options = [
+      PopupMenuItem(
+        value: 1,
+        child: GestureDetector(
+            onTap: () async {
+              await canLaunch(url)
+                  ? await launch(url)
+                  : throw 'Could not launch $url';
+            },
+            child: Text("Download Assignment")),
+      ),
+    ];
+
+    showMenu(
+      context: context,
+      position: RelativeRect.fromLTRB(left, top, 10, 10),
+      items: options,
+    );
+  }
+
+
 }
