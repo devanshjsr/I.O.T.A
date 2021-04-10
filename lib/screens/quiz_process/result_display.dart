@@ -2,6 +2,7 @@
 import 'package:iota/screens/quiz_process/show_quizzes.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:iota/screens/student/student_main_screen.dart';
 
 import '../../styles.dart';
 
@@ -14,7 +15,7 @@ class ResultDisplay extends StatelessWidget {
 
   Future<bool> backCommand() {
     Navigator.pushReplacement(
-        ctx, MaterialPageRoute(builder: (ctx) => ShowQuizzes()));
+        ctx, MaterialPageRoute(builder: (ctx) => StudentMainScreen()));
   }
 
   @override

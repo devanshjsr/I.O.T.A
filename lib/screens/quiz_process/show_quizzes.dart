@@ -8,6 +8,8 @@ import '../../styles.dart';
 import 'question_list.dart';
 
 class ShowQuizzes extends StatefulWidget {
+  final String subjectId;
+  ShowQuizzes(this.subjectId);
   static const routeName = "/show_quizzes_screen";
 
   @override
@@ -99,7 +101,7 @@ class _ShowQuizzesState extends State<ShowQuizzes> {
 
   @override
   void initState() {
-    dbs.getQuizInfo().then((value) {
+    dbs.getQuizInfo(widget.subjectId).then((value) {
       setState(() {
         quizStream = value;
       });

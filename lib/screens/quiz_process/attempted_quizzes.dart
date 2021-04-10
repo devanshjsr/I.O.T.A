@@ -1,6 +1,7 @@
 import 'package:iota/services/database_services.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:iota/screens/quiz_process/attempted_question_list.dart';
 
 class AttemptedQuizzes extends StatefulWidget {
   final String subjectId;
@@ -26,7 +27,7 @@ class _AttemptedQuizzesState extends State<AttemptedQuizzes> {
       String currentId = quizListSnap.docs[i].id;
       DocumentSnapshot value = await dbs.getAttemptedQuizData(currentId);
 
-      print("HEREEEE");
+      print("HEREEEEEEEEEEEEEEEEEEEEE");
       Map<String, String> quizData = {
         "title": value.data()["title"],
         "duration": value.data()["durationInMins"],
@@ -54,7 +55,29 @@ class _AttemptedQuizzesState extends State<AttemptedQuizzes> {
                       itemCount: quizListSnap.docs.length,
                       itemBuilder: (context, index) {
                         if (quizInfo[index]["subjectId"] == widget.subjectId) {
-                          return Container();
+                          return FutureBuilder(
+                              future: dbs.checkIfCurrentStudentAttemptedQuiz(
+                                  quizInfo[index]["quizId"]),
+                              builder: (ctx, snapshot) {
+                                if (snapshot.connectionState ==
+                                    ConnectionState.done) {
+                                  if (snapshot.data == true) {
+                                    return Quiz(
+                                      title:
+                                          quizInfo[index]["title"].toString(),
+                                      duration: quizInfo[index]["duration"]
+                                          .toString(),
+                                      quizId: quizInfo[index]["quizId"],
+                                    );
+                                  } else {
+                                    return Container();
+                                  }
+                                } else {
+                                  return Center(
+                                    child: CircularProgressIndicator(),
+                                  );
+                                }
+                              });
                         } else {
                           return Container();
                         }
@@ -92,7 +115,10 @@ class Quiz extends StatelessWidget {
             ),
           ),
           onTap: () {
-            //TODO;
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => AttemptedQuestionList(quizId)));
           },
         ));
   }
