@@ -1,7 +1,5 @@
 // Data model to store all the strings
 
-import 'package:flutter/cupertino.dart';
-
 class DataModel {
   //  Login and signup
   static const SIGNUP = "Sign Up ?";
@@ -37,7 +35,7 @@ class DataModel {
   static const SOMETHING_WENT_WRONG =
       "Something went wrong\n Please try again later.";
 
- //  App drawer specific constants
+  //  App drawer specific constants
   static const HOME = "Home";
   static const CONTACT_US = "Contact Us";
   static const MY_PROFILE = "My Profile";
@@ -55,5 +53,8 @@ class DataModel {
   static const SUBJECT_NAME = "Enter Subject Name";
   static const SUBJECT_DESCRIPTION = "Enter Subject Description";
   static const REQUIRED = "Required Field";
-  static const INVALID_DESCRIPTION = "Description must be at least 20 char long ";
+  static const INVALID_DESCRIPTION =
+      "Description must be at least 20 char long ";
+  static const APP_ICON_PNG =
+      "https://firebasestorage.googleapis.com/v0/b/quiz-app-8322a.appspot.com/o/App%20logo%2Fapp%20logo.png?alt=media&token=5d509e77-0b2a-40c4-bd10-4ca80eef6fa9";
 }

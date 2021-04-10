@@ -1,6 +1,13 @@
-import 'package:flutter/cupertino.dart';
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+
+import 'member_model.dart';
+
+//  Class for subject
 class Subject {
   final String id;
   final String name;
@@ -56,7 +63,8 @@ class Subject {
       "value": "Bio-Tech",
     }
   ];
-  
+
+  //  Method to fetch branch list from (comma-seperated branch) string
   static List<String> extractBranchFromString(String str) {
     if (str == null) {
       return [];
@@ -67,7 +75,6 @@ class Subject {
     return subjects;
   }
 
-
   static Future<String> getFacultyNameFromFacultyId(String facultyId) async {
     QuerySnapshot query = await FirebaseFirestore.instance
         .collection("Faculty")
@@ -76,17 +83,67 @@ class Subject {
         .get();
     return query.docs.first.data()["name"];
   }
-
 }
 
-class SubjectProvider with ChangeNotifier{
+class SubjectProvider with ChangeNotifier {
+  //  List of subjects currently enrolled in(for student)
+  List<Subject> _myEnrolledSubjectsList = [];
 
+  //  List of subjects owned by user(for faculty)
   List<Subject> _mySubjectsList = [];
 
-  List<Subject> get getMySubjectsList{
+  //  getter to return copy of enrolledSubjectsList
+  List<Subject> get getMyEnrolledSubjectsList {
+    return [..._myEnrolledSubjectsList];
+  }
+
+  //  getter to return copy of mySubjectsList
+  List<Subject> get getMySubjectsList {
     return [..._mySubjectsList];
   }
 
+  List<Member> _myEnrolledStudents = [];
+
+  List<Member> get getmyEnrolledStudents {
+    return [..._myEnrolledStudents];
+  }
+
+  Future<void> fetchMyEnrolledSubjects() async {
+    final CollectionReference myEnrolledSubjectsId = FirebaseFirestore.instance
+        .collection("Student")
+        .doc(FirebaseAuth.instance.currentUser.uid)
+        .collection("Enrolled Subjects");
+    try {
+      //  Fetch all the subject IDs
+      var fetchedSubjectsId = await myEnrolledSubjectsId.get();
+      List<Subject> subjects = [];
+
+      //  Fetch subject data from IDs
+      for (var element in fetchedSubjectsId.docs) {
+        var fetchedSubject = await FirebaseFirestore.instance
+            .collection("Subjects")
+            .doc(element.id)
+            .get();
+        if (fetchedSubject.data() != null) {
+          subjects.add(
+            Subject(
+              id: fetchedSubject.id,
+              name: fetchedSubject.data()["subject_name"],
+              description: fetchedSubject.data()["des"],
+              facultyId: fetchedSubject.data()["faculty_id"],
+              branch: Subject.extractBranchFromString(
+                  fetchedSubject.data()["branch"]),
+              subjectCode: fetchedSubject.data()["subject_code"],
+            ),
+          );
+        }
+      }
+      _myEnrolledSubjectsList = subjects;
+      notifyListeners();
+    } catch (error) {
+      throw error;
+    }
+  }
 
   Future<void> fetchmySubjects() async {
     final CollectionReference mySubjectsId = FirebaseFirestore.instance
@@ -123,22 +180,117 @@ class SubjectProvider with ChangeNotifier{
     }
   }
 
- 
-  //  Method used to get search parameters for a subject using subject name
-  //  (Used to search for a subject)
-  List<String> getSearchKeywords(String subjectName) {
-    List<String> caseSearchList = [];
-    subjectName = subjectName.toLowerCase();
-    String temp = "";
-    for (int i = 0; i < subjectName.length; i++) {
-      temp = temp + subjectName[i];
-      caseSearchList.add(temp);
+  //  Method to join any subject using Join Subject btn( Asks for accepting request from faculty)
+  Future<void> joinSubjectByPermission(
+      Subject subject, String studentId, String studentName) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection("Faculty")
+          .doc(subject.facultyId)
+          .collection("Pending students in subjects")
+          .doc(subject.id)
+          .collection("Students List")
+          .doc(studentId)
+          .set({"student name": studentName});
+    } catch (error) {
+      throw error;
     }
-    return caseSearchList;
   }
 
-  
+  //  Method to remove any subject joining request using Cancel request btn
+  Future<void> removeSubjectJoinRequest(
+      Subject subject, String studentId) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection("Faculty")
+          .doc(subject.facultyId)
+          .collection("Pending students in subjects")
+          .doc(subject.id)
+          .collection("Students List")
+          .doc(studentId)
+          .delete();
+    } catch (error) {
+      throw error;
+    }
+  }
 
+  Future<List<Map<String, String>>> fetchPendingRequestsForSubject(
+      Subject subject) async {
+    QuerySnapshot res = await FirebaseFirestore.instance
+        .collection("Faculty")
+        .doc(subject.facultyId)
+        .collection("Pending students in subjects")
+        .doc(subject.id)
+        .collection("Students List")
+        .get();
+    List<Map<String, String>> studentList = [];
+    for (var x in res.docs) {
+      print(x.data());
+      studentList.add(
+        {
+          "student name": x.data()["student name"],
+          "student id": x.id,
+        },
+      );
+    }
+    return studentList;
+  }
+
+  Future<bool> checkIfSubjectJoinPermissionIsPending(
+      Subject subject, String studentId) async {
+    try {
+      DocumentSnapshot res = await FirebaseFirestore.instance
+          .collection("Faculty")
+          .doc(subject.facultyId)
+          .collection("Pending students in subjects")
+          .doc(subject.id)
+          .collection("Students List")
+          .doc(studentId)
+          .get();
+      print(res.exists);
+      if (res.exists) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  //Fetch Enrolled Students of the given subject;
+  Future<void> fetchEnrolledStudents(String docRef) async {
+    var enrolledStudents = await FirebaseFirestore.instance
+        .collection("Subjects")
+        .doc(docRef)
+        .collection("Enrolled Students")
+        .get();
+    List<Member> _myList = [];
+    for (var element in enrolledStudents.docs) {
+      String userId = element.id;
+
+      var fetchedStudents = await FirebaseFirestore.instance
+          .collection("Student")
+          .doc(userId)
+          .collection("MyData")
+          .get();
+
+      for (var student in fetchedStudents.docs) {
+        Member newMember = Member(
+            id: userId,
+            name: student.data()["name"],
+            mobileNumber: student.data()["mobileNumber"]);
+        _myList.add(newMember);
+
+        print(student.data()["name"]);
+        print(student.data()["mobileNumber"]);
+      }
+    }
+
+    _myEnrolledStudents = _myList;
+  }
+
+  //Method to create a subject
   Future<void> addSubject(Map<String, String> _professor,
       Map<String, String> _subjects, String uid) async {
     DocumentReference docRef =
@@ -172,5 +324,88 @@ class SubjectProvider with ChangeNotifier{
     _mySubjectsList.add(newAddedSubject);
 
     notifyListeners();
+  }
+
+  Future<bool> checkIfEnrolledToASubjectUsingId(String id) async {
+    bool isEnrolled =
+        _myEnrolledSubjectsList.any((element) => element.id == id);
+    if (isEnrolled == true) {
+      return true;
+    } else {
+      //Check in firestore to be sure, and if found on firestore, add to local list as well
+      DocumentSnapshot res = await FirebaseFirestore.instance
+          .collection("Student")
+          .doc(FirebaseAuth.instance.currentUser.uid)
+          .collection("Enrolled Subjects")
+          .doc(id)
+          .get();
+      if (res.exists) {
+        print(res.data());
+        DocumentSnapshot fetchedSubject = await FirebaseFirestore.instance
+            .collection("Subjects")
+            .doc(res.id)
+            .get();
+        _myEnrolledSubjectsList.add(Subject(
+          id: fetchedSubject.id,
+          name: fetchedSubject.data()["subject_name"],
+          description: fetchedSubject.data()["des"],
+          facultyId: fetchedSubject.data()["faculty_id"],
+          branch:
+              Subject.extractBranchFromString(fetchedSubject.data()["branch"]),
+          subjectCode: fetchedSubject.data()["subject_code"],
+        ));
+        notifyListeners();
+        return true;
+      } else {
+        return false;
+      }
+    }
+  }
+
+  //  Function to get query snapshot stream(of subjects) based upon the search query
+  Stream<QuerySnapshot> getSubjectsOnSearch(String search) {
+    return FirebaseFirestore.instance
+        .collection('Subjects')
+        .where("searchKeywords", arrayContains: search)
+        .snapshots();
+  }
+
+  //  Method used to get search parameters for a subject using subject name
+  //  (Used to search for a subject)
+  List<String> getSearchKeywords(String subjectName) {
+    List<String> caseSearchList = [];
+    subjectName = subjectName.toLowerCase();
+    String temp = "";
+    for (int i = 0; i < subjectName.length; i++) {
+      temp = temp + subjectName[i];
+      caseSearchList.add(temp);
+    }
+    return caseSearchList;
+  }
+
+  //Method to fetch subject using subject-code
+  static Future<Subject> fetchSubjectUsingCode(String subjectCode) async {
+    try {
+      QuerySnapshot data = await FirebaseFirestore.instance
+          .collection("Subjects")
+          .where('subject_code', isEqualTo: subjectCode)
+          .get();
+      if (data.docs.length == 0) {
+        return null;
+      } else {
+        Subject newSubject = Subject(
+          id: data.docs[0].id,
+          name: data.docs[0].data()["subject_name"],
+          description: data.docs[0].data()["des"],
+          facultyId: data.docs[0].data()["faculty_id"],
+          branch:
+              Subject.extractBranchFromString(data.docs[0].data()["branch"]),
+          subjectCode: data.docs[0].data()["subject_code"],
+        );
+        return newSubject;
+      }
+    } catch (error) {
+      throw error;
+    }
   }
 }
