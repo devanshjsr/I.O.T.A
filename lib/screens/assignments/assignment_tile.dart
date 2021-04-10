@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:iota/assignment/view_assignment.dart';
-import 'package:iota/assignment/view_assignment_argument.dart';
-import 'package:iota/assignment/view_submission.dart';
-import 'package:iota/dialog/custom_dialog.dart';
-import 'package:iota/models/assignment_model.dart';
-import 'package:iota/models/shared_preferences.dart';
-import 'package:iota/styles.dart';
+
+import '../../dialog/custom_dialog.dart';
+import '../../models/assignment_model.dart';
+import '../../models/shared_preferences.dart';
+import '../../styles.dart';
+import 'view_assignment.dart';
+import 'view_assignment_argument.dart';
+import 'view_submission.dart';
+
 class AssignmentTile extends StatelessWidget {
   final Assignment assignment;
   final String type;
@@ -24,7 +26,7 @@ class AssignmentTile extends StatelessWidget {
     }
 
     assignmentOptions(Offset offset) {
-        CustomDialog.showAssignmentDialog(context, offset, assignment,type);
+      CustomDialog.showAssignmentDialog(context, offset, assignment, type);
     }
 
     return GestureDetector(
@@ -81,6 +83,4 @@ class AssignmentTile extends StatelessWidget {
       ),
     );
   }
-
-  
 }

@@ -44,6 +44,9 @@ android/app/google-services.json
 #API keys
 lib/services/settings.dart
 
+# API key
+lib/services/settings.dart
+
 # Android Studio will place build artifacts here
 /android/app/debug
 /android/app/profile
