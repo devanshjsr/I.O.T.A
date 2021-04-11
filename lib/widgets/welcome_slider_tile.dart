@@ -14,6 +14,15 @@ class WelcomeSliderTile extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
+          Text(
+            desc,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 35,
+              color: CustomStyle.primaryColor,
+            ),
+          ),
           Image.asset(imagePath),
           SizedBox(
             height: 40,

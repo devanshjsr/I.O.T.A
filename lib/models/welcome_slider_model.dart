@@ -63,8 +63,8 @@ List<WelcomeSliderModel> getSlides() {
   slides.add(welcomeSliderModel);
 
   welcomeSliderModel = WelcomeSliderModel();
-  welcomeSliderModel.setDesc("");
-  welcomeSliderModel.setTitle("");
+  welcomeSliderModel.setDesc("I.O.T.A.");
+  welcomeSliderModel.setTitle("Interactive Online Test App");
   welcomeSliderModel.setImageAssetPath("assets/images/logo.png");
   slides.add(welcomeSliderModel);
 
