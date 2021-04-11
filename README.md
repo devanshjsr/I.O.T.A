@@ -13,29 +13,17 @@ Interactive Online Test Application.
 
 With the sudden lockdowns due to the Coronavirus pandemic, students faced a new challenge of attending classes from home and at this moment it was necessary that classrooms should reach to them.
 But at that time neither the teachers nor students were fully prepared to adapt to this mode of education. But even now when we are gradually adapting to this mode, there are still some issues which leads to its ineffectiveness
-One of the major issues being Conducting Online Tests. Both teachers and students have their own area of concern. Teachers on one hand wants to make it more authentic and free of malpractices. Students, on the other hand face issues like missing the deadline due to network failure and more than one test being scheduled at the same time.
+#### One of the major issues being Conducting Online Tests. Both teachers and students have their own area of concern. Teachers on one hand wants to make it more authentic and free of malpractices. Students, on the other hand face issues like missing the deadline due to network failure and more than one test being scheduled at the same time.
 
 There are many meeting apps which are currently being used by educational institutes for conducting online classes and tests. But being a meeting app, they are not able to effectively conduct the tests.
 So we decided to come up with an All-In-One Test App providing a safe and convenient way to conduct and attempt quizzes, vivas and assignments
 
  ## Features 
- 1. User can create a account either as a professor or as a student.
- 2. Professor can create a subject and share it either using the subject code or dynamic link.
- 3. Student can join the subject view members present in the particular subject and can also view the profile of the members.
- 4. Student can also join a subject by sending joining request to professor and will be added in group after professor will grant permission.
- 5. User can search for particular subject among all the available subjects. 
- 6. In a particular subject professor can create a assignment and view the submissions done by students  in any particular assignment.
- 7. Students can upload their assignment before the dealine set by professor for that assignment.
- 8. After deadline passed no assignment submission will be accepted.
- 9. For students two different assignment section is their one for the assigned work and other for the completed work.
- 10. For professors also two different assignment section is their based on deadline.
- 11. Professor can create a quiz for the subject with no clash feature for quiz.
- 12. Student can attempt a particular quiz only once.
- 13. Student can view the submiited quiz later for self - evaluation.
- 14. Timer for on going quizzes.
- 15. Auto-submission of selected answers in case of timeout or network failure.
- 16. Speech to text during quiz creation for faculty.
- 17. Private rooms for video call for viva and query session of selected student in particular subject
+#### -Safe and Anti-Cheat framework to curb malpractices during online tests.
+#### -Auto-submission of selected answers in case of timeout or network failure.
+#### -Attempted quizzes can be reviewed for learning and revision.
+#### -Private rooms with video call feature for viva and query sessions.
+#### -Clash-avoidance of tests occurring at the same time. 
    
  ### PPT Link - <a href = "https://docs.google.com/presentation/d/1QrPoylPMnfH-Lm-eASyOCGBN2Vp-OFUacQq0muAwb1U/edit#slide=id.p"> Go to Ppt </a>
  ### Video Demo - <a href = "https://drive.google.com/file/d/1SjCy3selyuZ9opVu8d0XV3-6VcZcOeht/view?usp=sharing"> Go to Video </a>
