@@ -9,6 +9,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../models/assignment_model.dart';
 import '../../models/data_model.dart';
+import '../../models/fcm_provider.dart';
 import '../../models/subject_model.dart';
 import '../../styles.dart';
 
@@ -42,6 +43,7 @@ class _AddAssignmentState extends State<AddAssignment> {
     "due date": "",
     "url_of_question_pdf": "",
   };
+  DateTime dueDate;
 
   Future<void> _selectDate(BuildContext context) async {
     print(currentDate);
@@ -72,6 +74,7 @@ class _AddAssignmentState extends State<AddAssignment> {
             " " +
             currentTime.toString().substring(10, 15);
         _assignment["due date"] = pickedDateTime.toIso8601String();
+        dueDate = pickedDateTime;
         print(deadline);
       });
     }
@@ -128,9 +131,11 @@ class _AddAssignmentState extends State<AddAssignment> {
             if (file != null) {
               asset = file.readAsBytesSync();
             }
-            Provider.of<AssignmentProvider>(context, listen: false)
+            await Provider.of<AssignmentProvider>(context, listen: false)
                 .uploadAssignment(subject, _assignment, asset, fileName);
-
+            await Provider.of<FcmProvider>(context, listen: false)
+                .sendUpcomingAssignmentNotification(
+                    subject.id, _assignment["name"], dueDate);
             setState(() {
               isLoading = false;
             });

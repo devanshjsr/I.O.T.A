@@ -2,8 +2,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:provider/provider.dart';
 
 import '../../models/data_model.dart';
+import '../../models/fcm_provider.dart';
 import '../../services/database_services.dart';
 import '../../styles.dart';
 import '../../widgets/voice_search_bottom_sheet.dart';
@@ -55,6 +57,9 @@ class _AddQuestionsState extends State<AddQuestions> {
   // }
 
   void submit() async {
+    await Provider.of<FcmProvider>(context, listen: false)
+        .sendUpcomingTestNotification(quizMap["subjectId"], quizMap["title"],
+            DateTime.now(), quizMap["durationInMins"]);
     setState(() {
       _loadingIndicator = true;
     });

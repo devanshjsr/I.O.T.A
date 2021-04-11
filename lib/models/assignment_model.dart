@@ -1,15 +1,14 @@
-
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import 'fcm_provider.dart';
 import 'subject_model.dart';
 import 'submission_model.dart';
 
-
+import 'package:provider/provider.dart';
 
 class Assignment {
   final String id;
@@ -24,23 +23,23 @@ class Assignment {
       this.description,
       @required this.dueDate,
       @required this.url});
-  
-    static Future<String> fetchMyWork(Assignment assignment) async{
+
+  static Future<String> fetchMyWork(Assignment assignment) async {
     DocumentSnapshot doc = await FirebaseFirestore.instance
-                                .collection("Assignment")
-                                .doc(assignment.id)
-                                .collection("list_of_submissions")
-                                .doc(FirebaseAuth.instance.currentUser.uid)
-                                .get();
+        .collection("Assignment")
+        .doc(assignment.id)
+        .collection("list_of_submissions")
+        .doc(FirebaseAuth.instance.currentUser.uid)
+        .get();
 
     return doc.data()["url_of_submitted_pdf"];
   }
 }
+
 class AssignmentProvider with ChangeNotifier {
   List<Assignment> _onGoingAssignments = [];
 
   List<Assignment> _completedAssignments = [];
-
 
   List<Assignment> _studentPendingAssignment = [];
   List<Assignment> _studentSubmittedAssignment = [];
@@ -110,13 +109,13 @@ class AssignmentProvider with ChangeNotifier {
           .doc(docRef.id)
           .set(assignmentId);
     }
-    
+
     Assignment newAssignment = Assignment(
-      id: docRef.id,name: 
-      assignment["name"],
-      description: assignment["description"],
-      dueDate: assignment["due date"],
-      url: assignment["url_of_question_pdf"]);
+        id: docRef.id,
+        name: assignment["name"],
+        description: assignment["description"],
+        dueDate: assignment["due date"],
+        url: assignment["url_of_question_pdf"]);
     _onGoingAssignments.add(newAssignment);
 
     notifyListeners();
@@ -238,12 +237,11 @@ class AssignmentProvider with ChangeNotifier {
         .collection("list_of_submissions")
         .doc(uid)
         .set(submittedAssignment);
-    
+
     _studentPendingAssignment.remove(assignment);
     _studentSubmittedAssignment.add(assignment);
 
     notifyListeners();
-
   }
 
   Future<void> fetchSubmittedAssignments(Assignment assignment) async {
@@ -281,7 +279,6 @@ class AssignmentProvider with ChangeNotifier {
     notifyListeners();
   }
 
-
   Future<void> deleteUploadedAssignment(Assignment assignment) async {
     String url = assignment.url;
     StorageReference pdfRef = await FirebaseStorage.instance
@@ -302,7 +299,7 @@ class AssignmentProvider with ChangeNotifier {
         .collection("list_of_submissions")
         .doc(FirebaseAuth.instance.currentUser.uid)
         .delete();
-    
+
     _studentSubmittedAssignment.remove(assignment);
     _studentPendingAssignment.add(assignment);
     notifyListeners();
