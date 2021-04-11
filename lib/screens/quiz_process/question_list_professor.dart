@@ -57,7 +57,7 @@ class _QuestionListProfessorState extends State<QuestionListProfessor> {
       querySnap.data()["option4"]
     ];
 
-    options.shuffle();
+    //options.shuffle();
     questionModel.option1 = options[0];
     questionModel.option2 = options[1];
     questionModel.option3 = options[2];
