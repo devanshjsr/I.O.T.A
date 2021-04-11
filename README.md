@@ -9,7 +9,15 @@ Interactive Online Test Application.
 #### 2. ADITYA SHARMA
 #### 3. ANIMESH KUMAR
 #### 4. DEVANSH SHUKLA 
- 
+ ## About the Project - 
+
+With the sudden lockdowns due to the Coronavirus pandemic, students faced a new challenge of attending classes from home and at this moment it was necessary that classrooms should reach to them.
+But at that time neither the teachers nor students were fully prepared to adapt to this mode of education. But even now when we are gradually adapting to this mode, there are still some issues which leads to its ineffectiveness
+One of the major issues being Conducting Online Tests. Both teachers and students have their own area of concern. Teachers on one hand wants to make it more authentic and free of malpractices. Students, on the other hand face issues like missing the deadline due to network failure and more than one test being scheduled at the same time.
+
+There are many meeting apps which are currently being used by educational institutes for conducting online classes and tests. But being a meeting app, they are not able to effectively conduct the tests.
+So we decided to come up with an All-In-One Test App providing a safe and convenient way to conduct and attempt quizzes, vivas and assignments
+
  ## Features 
  1. User can create a account either as a professor or as a student.
  2. Professor can create a subject and share it either using the subject code or dynamic link.
@@ -51,6 +59,12 @@ Interactive Online Test Application.
 10. image_picker: ^0.6.7+11 - for picking the image for the profile.
 11. shimmer: ^1.1.2 - for adding the shimmer effect.
 12. animated_splash_screen: ^1.1.0 - for adding animation effect in app.
+ 
+## Tools and Services Used :
+1. VsCode.
+2. Firebase cloud Messaging.
+3. Firebase Dynamic Links.
+4. Heroku
 
 # Contributors 
 1. <a href= "https://github.com/aanchalsingh17"> Aanchal Singh </a>
@@ -70,3 +84,8 @@ Interactive Online Test Application.
 ![WhatsApp Image 2021-04-11 at 08 10 11(1)](https://user-images.githubusercontent.com/47004131/114290533-f1ab2400-9a9d-11eb-9a0d-b1650054157d.jpeg)
 ![WhatsApp Image 2021-04-11 at 08 10 11](https://user-images.githubusercontent.com/47004131/114290535-f2dc5100-9a9d-11eb-96af-f8c3cb2f758d.jpeg)
 ![WhatsApp Image 2021-04-11 at 08 10 10](https://user-images.githubusercontent.com/47004131/114290536-f374e780-9a9d-11eb-83b2-270c9dc3cbc3.jpeg)
+
+## MADE AT - 
+
+![Made-at-Hack-36](https://user-images.githubusercontent.com/47004131/114283344-e8eb2b80-9a66-11eb-944d-7f1e808fe010.png)
+
