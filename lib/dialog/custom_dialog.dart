@@ -474,11 +474,7 @@ class CustomDialog {
       if (isValid) {
         _formKey.currentState.save();
         Provider.of<SubjectProvider>(context, listen: false)
-            .joinSubjectUsingCode(
-          subjectCode,
-          name,
-          uid,
-        )
+            .joinSubjectUsingCode(subjectCode, name, uid, context)
             .catchError((error) {
           String snackBarContent;
           if (error == "NOT FOUND") {

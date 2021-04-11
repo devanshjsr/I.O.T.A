@@ -4,7 +4,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import 'fcm_provider.dart';
 import 'member_model.dart';
 
 //  Class for subject
@@ -108,7 +110,7 @@ class SubjectProvider with ChangeNotifier {
     return [..._myEnrolledStudents];
   }
 
-  Future<void> fetchMyEnrolledSubjects() async {
+  Future<void> fetchMyEnrolledSubjects(BuildContext context) async {
     final CollectionReference myEnrolledSubjectsId = FirebaseFirestore.instance
         .collection("Student")
         .doc(FirebaseAuth.instance.currentUser.uid)
@@ -117,14 +119,13 @@ class SubjectProvider with ChangeNotifier {
       //  Fetch all the subject IDs
       var fetchedSubjectsId = await myEnrolledSubjectsId.get();
       List<Subject> subjects = [];
-
-      //  Fetch subject data from IDs
-      for (var element in fetchedSubjectsId.docs) {
-        var fetchedSubject = await FirebaseFirestore.instance
-            .collection("Subjects")
-            .doc(element.id)
-            .get();
-        if (fetchedSubject.data() != null) {
+      List<String> subjectIds =
+          fetchedSubjectsId.docs.map((e) => e.id).toList();
+      var data = await FirebaseFirestore.instance.collection("Subjects").get();
+      for (var fetchedSubject in data.docs) {
+        if (subjectIds.contains(fetchedSubject.id)) {
+          Provider.of<FcmProvider>(context, listen: false)
+              .subscribeToSubject(fetchedSubject.id);
           subjects.add(
             Subject(
               id: fetchedSubject.id,
@@ -136,8 +137,34 @@ class SubjectProvider with ChangeNotifier {
               subjectCode: fetchedSubject.data()["subject_code"],
             ),
           );
+        } else {
+          Provider.of<FcmProvider>(context, listen: false)
+              .unsubscribeFromSubject(fetchedSubject.id);
         }
+        // print(x.data());
       }
+      //  Fetch subject data from IDs
+      // for (var element in fetchedSubjectsId.docs) {
+      //   var fetchedSubject = await FirebaseFirestore.instance
+      //       .collection("Subjects")
+      //       .doc(element.id)
+      //       .get();
+      //   if (fetchedSubject.data() != null) {
+      //     Provider.of<FcmProvider>(context, listen: false)
+      //         .subscribeToSubject(fetchedSubject.id);
+      //     subjects.add(
+      //       Subject(
+      //         id: fetchedSubject.id,
+      //         name: fetchedSubject.data()["subject_name"],
+      //         description: fetchedSubject.data()["des"],
+      //         facultyId: fetchedSubject.data()["faculty_id"],
+      //         branch: Subject.extractBranchFromString(
+      //             fetchedSubject.data()["branch"]),
+      //         subjectCode: fetchedSubject.data()["subject_code"],
+      //       ),
+      //     );
+      //   }
+      // }
       _myEnrolledSubjectsList = subjects;
       notifyListeners();
     } catch (error) {
@@ -180,6 +207,65 @@ class SubjectProvider with ChangeNotifier {
     }
   }
 
+  //Method to add new Subject in the enrolled list( Method to join a subject(Join directly when using subject-code))
+  Future<void> joinSubjectUsingCode(
+      String subjectCode, String name, String uid, BuildContext context) async {
+    try {
+      QuerySnapshot data = await FirebaseFirestore.instance
+          .collection("Subjects")
+          .where('subject_code', isEqualTo: subjectCode)
+          .get();
+      if (data.docs.length == 0) {
+        throw "NOT FOUND";
+      } else {
+        final Map<String, String> enrolledSubject = {
+          "subject_name": data.docs[0].data()["subject_name"],
+        };
+
+        await FirebaseFirestore.instance
+            .collection("Student")
+            .doc(uid)
+            .collection("Enrolled Subjects")
+            .doc(data.docs[0].id)
+            .set(enrolledSubject);
+
+        //Add the newly added Subject into my Enrolled Subject List;
+        Subject newEnrolledSubject = Subject(
+          id: data.docs[0].id,
+          name: data.docs[0].data()["subject_name"],
+          description: data.docs[0].data()["des"],
+          facultyId: data.docs[0].data()["faculty_id"],
+          branch:
+              Subject.extractBranchFromString(data.docs[0].data()["branch"]),
+          subjectCode: data.docs[0].data()["subject_code"],
+        );
+
+        _myEnrolledSubjectsList.add(newEnrolledSubject);
+
+        //Add the userId in the subjects enrolled students list
+        Map<String, String> userName = {
+          "student_name": name,
+        };
+
+        await FirebaseFirestore.instance
+            .collection("Subjects")
+            .doc(data.docs[0].id)
+            .collection("Enrolled Students")
+            .doc(uid)
+            .set(userName);
+        Provider.of<FcmProvider>(context, listen: false)
+            .subscribeToSubject(data.docs[0].id);
+
+        notifyListeners();
+
+        //  If join request exists, delete it
+        await removeSubjectJoinRequest(newEnrolledSubject, uid);
+      }
+    } catch (error) {
+      throw error;
+    }
+  }
+
   //  Method to join any subject using Join Subject btn( Asks for accepting request from faculty)
   Future<void> joinSubjectByPermission(
       Subject subject, String studentId, String studentName) async {
@@ -209,6 +295,43 @@ class SubjectProvider with ChangeNotifier {
           .collection("Students List")
           .doc(studentId)
           .delete();
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  //  Method to accept/reject subject joining request(used by faculty)
+  Future<void> respondToJoinRequest(Subject subject, String studentId,
+      bool accept, String studentName, BuildContext context) async {
+    try {
+      //  Join request is removed in both case(accept & reject)
+      await removeSubjectJoinRequest(subject, studentId);
+      if (accept == true) {
+        final Map<String, String> enrolledSubject = {
+          "subject_name": subject.name,
+        };
+
+        await FirebaseFirestore.instance
+            .collection("Student")
+            .doc(studentId)
+            .collection("Enrolled Subjects")
+            .doc(subject.id)
+            .set(enrolledSubject);
+
+        //Add the userId in the subjects enrolled students list
+        Map<String, String> userName = {
+          "student_name": studentName,
+        };
+
+        await FirebaseFirestore.instance
+            .collection("Subjects")
+            .doc(subject.id)
+            .collection("Enrolled Students")
+            .doc(studentId)
+            .set(userName);
+      } else {
+        //  TODO: send a notification to student that his request has been denied
+      }
     } catch (error) {
       throw error;
     }
@@ -253,6 +376,60 @@ class SubjectProvider with ChangeNotifier {
       } else {
         return false;
       }
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  //  Method to leave a subject(for student)
+  Future<void> leaveSubject(
+      Subject subject, String studentId, BuildContext context) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection("Student")
+          .doc(studentId)
+          .collection("Enrolled Subjects")
+          .doc(subject.id)
+          .delete();
+      //Remove the Subjectlocally from  my Enrolled Subject List;
+      _myEnrolledSubjectsList.remove(subject);
+
+      await FirebaseFirestore.instance
+          .collection("Subjects")
+          .doc(subject.id)
+          .collection("Enrolled Students")
+          .doc(studentId)
+          .delete();
+      Provider.of<FcmProvider>(context, listen: false)
+          .unsubscribeFromSubject(subject.id);
+      notifyListeners();
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  //  Method to leave a subject(for student)
+  Future<void> removeFromSubject(
+      Subject subject, String studentId, BuildContext context) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection("Student")
+          .doc(studentId)
+          .collection("Enrolled Subjects")
+          .doc(subject.id)
+          .delete();
+      //Remove the Subjectlocally from  my Enrolled Subject List;
+      _myEnrolledStudents.removeWhere((element) => element.id == studentId);
+
+      await FirebaseFirestore.instance
+          .collection("Subjects")
+          .doc(subject.id)
+          .collection("Enrolled Students")
+          .doc(studentId)
+          .delete();
+      Provider.of<FcmProvider>(context, listen: false)
+          .unsubscribeFromSubject(subject.id);
+      notifyListeners();
     } catch (error) {
       throw error;
     }
@@ -403,60 +580,6 @@ class SubjectProvider with ChangeNotifier {
           subjectCode: data.docs[0].data()["subject_code"],
         );
         return newSubject;
-      }
-    } catch (error) {
-      throw error;
-    }
-  }
-
-   Future<void> joinSubjectUsingCode(
-      String subjectCode, String name, String uid) async {
-    try {
-      QuerySnapshot data = await FirebaseFirestore.instance
-          .collection("Subjects")
-          .where('subject_code', isEqualTo: subjectCode)
-          .get();
-      if (data.docs.length == 0) {
-        throw "NOT FOUND";
-      } else {
-        final Map<String, String> enrolledSubject = {
-          "subject_name": data.docs[0].data()["subject_name"],
-        };
-
-        await FirebaseFirestore.instance
-            .collection("Student")
-            .doc(uid)
-            .collection("Enrolled Subjects")
-            .doc(data.docs[0].id)
-            .set(enrolledSubject);
-
-        //Add the newly added Subject into my Enrolled Subject List;
-        Subject newEnrolledSubject = Subject(
-          id: data.docs[0].id,
-          name: data.docs[0].data()["subject_name"],
-          description: data.docs[0].data()["des"],
-          facultyId: data.docs[0].data()["faculty_id"],
-          branch:
-              Subject.extractBranchFromString(data.docs[0].data()["branch"]),
-          subjectCode: data.docs[0].data()["subject_code"],
-        );
-
-        _myEnrolledSubjectsList.add(newEnrolledSubject);
-
-        //Add the userId in the subjects enrolled students list
-        Map<String, String> userName = {
-          "student_name": name,
-        };
-
-        await FirebaseFirestore.instance
-            .collection("Subjects")
-            .doc(data.docs[0].id)
-            .collection("Enrolled Students")
-            .doc(uid)
-            .set(userName);
-
-        notifyListeners();
-
       }
     } catch (error) {
       throw error;
