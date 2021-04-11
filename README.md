@@ -27,9 +27,12 @@ Interactive Online Test Application.
  14. Timer for on going quizzes.
  15. Auto-submission of selected answers in case of timeout or network failure.
  16. Speech to text during quiz creation for faculty.
- 17. Private rooms for video call for viva of selected student in particular subject
+ 17. Private rooms for video call for viva and query session of selected student in particular subject
+   
+ ### PPT Link - <a href = "https://docs.google.com/presentation/d/1QrPoylPMnfH-Lm-eASyOCGBN2Vp-OFUacQq0muAwb1U/edit#slide=id.p"> Go to Ppt </a>
+ ### Video Demo - <a href = "https://drive.google.com/file/d/1SjCy3selyuZ9opVu8d0XV3-6VcZcOeht/view?usp=sharing"> Go to Video </a>
+ ### Apk Link - <a href = "https://drive.google.com/drive/folders/1eRQq5T5dcrGA8Fv4VDjmRZAurKRETM2b?usp=sharing"> Go to Apk </a> 
  
-
 ## App Permissions 
 1. Internet Access.
 2. Storage Access(Read and Write).
