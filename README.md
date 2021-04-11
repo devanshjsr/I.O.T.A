@@ -1,14 +1,14 @@
 # I.O.T.A
-Interactive Online Test Application.
+## Interactive Online Test Application
 
 ![Made-at-Hack-36](https://user-images.githubusercontent.com/47004131/114283344-e8eb2b80-9a66-11eb-944d-7f1e808fe010.png)
 
-## Team Name - 36 ka Aakda
-### Team Members - 
-#### 1. AANCHAL SINGH (Leader)
-#### 2. ADITYA SHARMA
-#### 3. ANIMESH KUMAR
-#### 4. DEVANSH SHUKLA 
+### Contributors - 
+#### 1. <a href= "https://github.com/aanchalsingh17"> Aanchal Singh </a>
+#### 2. <a href= "https://github.com/aditya2548"> Aditya Sharma </a>
+#### 3. <a href= "https://github.com/Animo-Rey"> Animesh Kumar </a>
+#### 4. <a href= "https://github.com/devanshjsr"> Devansh Shukla </a>
+
  ## About the Project - 
 
 With the sudden lockdowns due to the Coronavirus pandemic, students faced a new challenge of attending classes from home and at this moment it was necessary that classrooms should reach to them.
@@ -19,6 +19,7 @@ There are many meeting apps which are currently being used by educational instit
 So we decided to come up with an All-In-One Test App providing a safe and convenient way to conduct and attempt quizzes, vivas and assignments
 
  ## Features 
+ 
 #### -Safe and Anti-Cheat framework to curb malpractices during online tests.
 #### -Auto-submission of selected answers in case of timeout or network failure.
 #### -Attempted quizzes can be reviewed for learning and revision.
@@ -49,31 +50,7 @@ So we decided to come up with an All-In-One Test App providing a safe and conven
 12. animated_splash_screen: ^1.1.0 - for adding animation effect in app.
  
 ## Tools and Services Used :
-1. VsCode.
-2. Firebase cloud Messaging.
+1. VSCode.
+2. Firebase Cloud Messaging.
 3. Firebase Dynamic Links.
 4. Heroku
-
-# Contributors 
-1. <a href= "https://github.com/aanchalsingh17"> Aanchal Singh </a>
-2. <a href= "https://github.com/aditya2548"> Aditya Sharma </a>
-3. <a href= "https://github.com/Animo-Rey"> Animesh Kumar </a>
-4. <a href= "https://github.com/devanshjsr"> Devansh Shukla </a>
-
-# Screenshots 
-![WhatsApp Image 2021-04-11 at 08 10 14(1)](https://user-images.githubusercontent.com/47004131/114290520-e8ba5280-9a9d-11eb-8b3f-52ad4f8e0d40.jpeg)
-![WhatsApp Image 2021-04-11 at 08 10 14](https://user-images.githubusercontent.com/47004131/114290522-ea841600-9a9d-11eb-9147-e0c7a0c6d0eb.jpeg)
-![WhatsApp Image 2021-04-11 at 08 10 13(2)](https://user-images.githubusercontent.com/47004131/114290523-ebb54300-9a9d-11eb-97d8-32995ce8a240.jpeg)
-![WhatsApp Image 2021-04-11 at 08 10 13(1)](https://user-images.githubusercontent.com/47004131/114290524-ece67000-9a9d-11eb-98fa-b3dfc3c54d6b.jpeg)
-![WhatsApp Image 2021-04-11 at 08 10 13](https://user-images.githubusercontent.com/47004131/114290527-ed7f0680-9a9d-11eb-8c15-556b1db80eee.jpeg)
-![WhatsApp Image 2021-04-11 at 08 10 12(1)](https://user-images.githubusercontent.com/47004131/114290529-eeb03380-9a9d-11eb-8662-99ebd554b7ee.jpeg)
-![WhatsApp Image 2021-04-11 at 08 10 12](https://user-images.githubusercontent.com/47004131/114290530-efe16080-9a9d-11eb-91a8-bd193974a67f.jpeg)
-![WhatsApp Image 2021-04-11 at 08 10 11(2)](https://user-images.githubusercontent.com/47004131/114290532-f079f700-9a9d-11eb-8f33-16449810fc5f.jpeg)
-![WhatsApp Image 2021-04-11 at 08 10 11(1)](https://user-images.githubusercontent.com/47004131/114290533-f1ab2400-9a9d-11eb-9a0d-b1650054157d.jpeg)
-![WhatsApp Image 2021-04-11 at 08 10 11](https://user-images.githubusercontent.com/47004131/114290535-f2dc5100-9a9d-11eb-96af-f8c3cb2f758d.jpeg)
-![WhatsApp Image 2021-04-11 at 08 10 10](https://user-images.githubusercontent.com/47004131/114290536-f374e780-9a9d-11eb-83b2-270c9dc3cbc3.jpeg)
-
-## MADE AT - 
-
-![Made-at-Hack-36](https://user-images.githubusercontent.com/47004131/114283344-e8eb2b80-9a66-11eb-944d-7f1e808fe010.png)
-
