@@ -1,28 +1,27 @@
 import 'package:flutter/material.dart';
-import 'package:iota/models/submission_model.dart';
-import 'package:iota/styles.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../models/submission_model.dart';
+import '../../styles.dart';
+
 class SubmissionTile extends StatelessWidget {
-
-
   Submission submission;
 
   SubmissionTile({@required this.submission});
-  
-   void _launchURL() async =>
-    await canLaunch(submission.url) ? await launch(submission.url) : throw 'Could not launch url';
-  
+
+  void _launchURL() async => await canLaunch(submission.url)
+      ? await launch(submission.url)
+      : throw 'Could not launch url';
+
   @override
   Widget build(BuildContext context) {
-  
     return GestureDetector(
-    child: Container(
+      child: Container(
         padding: EdgeInsets.symmetric(vertical: 6),
         decoration: CustomStyle.subjectTileStyle(),
         margin: EdgeInsets.symmetric(horizontal: 10, vertical: 8),
         child: ListTile(
-          onTap: (){
+          onTap: () {
             _launchURL();
           },
           leading: Hero(
@@ -34,7 +33,9 @@ class SubmissionTile extends StatelessWidget {
                 backgroundColor: CustomStyle.primaryColor,
                 radius: 25,
                 child: Text(
-                  submission.name.isEmpty ?   "US": submission.name.substring(0, 2).toUpperCase(),
+                  submission.name.isEmpty
+                      ? "US"
+                      : submission.name.substring(0, 2).toUpperCase(),
                   style: TextStyle(
                       color: CustomStyle.backgroundColor,
                       fontSize: 20,
@@ -50,11 +51,11 @@ class SubmissionTile extends StatelessWidget {
                 CustomStyle.customButtonTextStyle(fontWeight: FontWeight.bold),
           ),
           subtitle: Text(
-            "Submitted Time :  " +  submission.submissionTime.toString(),
+            "Submitted Time :  " + submission.submissionTime.toString(),
             style: CustomStyle.customButtonTextStyle(size: 14),
           ),
         ),
-    ),
+      ),
     );
   }
 }

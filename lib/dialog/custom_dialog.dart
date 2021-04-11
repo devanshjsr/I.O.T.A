@@ -13,7 +13,7 @@ import '../models/room_model.dart';
 import '../models/shared_preferences.dart';
 import '../models/subject_model.dart';
 import '../screens/assignments/view_assignment.dart';
-import '../screens/assignments/view_assignment_argument.dart';
+import '../screens/assignments/view_assignment_arguments.dart';
 import '../screens/assignments/view_submission.dart';
 import '../screens/room/add_students.dart';
 import '../screens/room/create_room.dart';
@@ -423,7 +423,14 @@ class CustomDialog {
             PopupMenuItem(
               value: 2,
               textStyle: TextStyle(color: CustomStyle.errorColor),
-              child: GestureDetector(onTap: () {}, child: Text("Leave")),
+              child: GestureDetector(
+                  onTap: () {
+                    Provider.of<SubjectProvider>(context, listen: false)
+                        .leaveSubject(subject,
+                            FirebaseAuth.instance.currentUser.uid, context)
+                        .then((value) => Navigator.pop(context));
+                  },
+                  child: Text("Leave")),
             ),
           ]
         : [

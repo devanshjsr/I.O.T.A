@@ -1,11 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 
 import '../../services/database_services.dart';
 import '../../styles.dart';
-import 'question_list.dart';
+import 'instructions.dart';
 
 class ShowQuizzes extends StatefulWidget {
   final String subjectId;
@@ -156,31 +157,9 @@ class Quiz extends StatelessWidget {
                           .substring(0, 19)
                           .compareTo(currentTime.substring(0, 19)) >
                       0) {
-                return showDialog(
-                  context: context,
-                  builder: (context) => AlertDialog(
-                    title: Text(
-                      "Attention!",
-                      style: TextStyle(
-                          color: Colors.red, fontWeight: FontWeight.bold),
-                    ),
-                    titleTextStyle: TextStyle(color: Colors.red),
-                    content: Text(
-                        "During quiz after 2 tab switch or back action quiz will autosubmit"),
-                    contentTextStyle: TextStyle(color: Colors.blueGrey),
-                    actions: [
-                      TextButton(
-                          onPressed: () {
-                            Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => QuestionList(
-                                        quizId, startTime, endTime, title)));
-                          },
-                          child: Text("I Agree"))
-                    ],
-                  ),
-                );
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (ctx) =>
+                        QuizInstructions(title, startTime, endTime, quizId)));
               } else {
                 Fluttertoast.showToast(msg: "Quiz hasn't started yet");
               }
@@ -240,6 +219,8 @@ class Quiz extends StatelessWidget {
       var res = await FirebaseFirestore.instance
           .collection("AttemptedQuiz")
           .doc(quizId)
+          .collection("StudentResponses")
+          .doc(FirebaseAuth.instance.currentUser.uid)
           .get();
       if (res.exists == true) {
         return true;

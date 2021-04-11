@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:iota/dialog/custom_dialog.dart';
-import 'package:iota/styles.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+
+import '../../dialog/custom_dialog.dart';
+import '../../styles.dart';
+import '../subjects/subject_search.dart';
+
 class CustomFAB extends StatefulWidget {
   @override
   _CustomFABState createState() => _CustomFABState();
@@ -97,7 +100,9 @@ class _CustomFABState extends State<CustomFAB>
                     color: CustomStyle.secondaryColor,
                     onPressed: () {
                       Fluttertoast.showToast(msg: "Hey");
-                      
+                      Navigator.of(context)
+                          .pushNamed(SubjectSearchScreen.routeName);
+                      changeFABstate();
                     },
                     icon: Icon(Icons.search),
                     height: 50,

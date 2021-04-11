@@ -1,8 +1,8 @@
-
 import 'package:flutter/cupertino.dart';
-import 'package:iota/models/room_model.dart';
 
-class MemberRoom{
+import '../../models/room_model.dart';
+
+class MemberRoom {
   String id;
   String name;
   String email;
@@ -12,5 +12,5 @@ class MemberRoom{
     @required this.name,
     @required this.email,
     @required this.room,
-    });
+  });
 }

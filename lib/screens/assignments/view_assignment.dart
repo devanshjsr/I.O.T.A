@@ -12,7 +12,7 @@ import '../../models/assignment_model.dart';
 import '../../models/data_model.dart';
 import '../../models/shared_preferences.dart';
 import '../../styles.dart';
-import 'view_assignment_argument.dart';
+import 'view_assignment_arguments.dart';
 
 class ViewAssignment extends StatefulWidget {
   static final routeName = "/viewAssignment";

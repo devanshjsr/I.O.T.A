@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
@@ -5,6 +6,7 @@ import 'package:provider/provider.dart';
 import '../../models/data_model.dart';
 import '../../models/room_model.dart';
 import '../../models/subject_model.dart';
+import '../../services/token.dart';
 import '../../styles.dart';
 
 class CreateRoom extends StatelessWidget {
@@ -35,6 +37,19 @@ class CreateRoom extends StatelessWidget {
             fontSize: 16.0);
 
         Navigator.of(context).pop();
+
+        // create room channel entry in database with token generation
+        String token = '';
+        String channelName = _room['room name'];
+        final db = FirebaseFirestore.instance;
+        final result = await generateToken(channelName: channelName);
+        print('Generated token for ' + channelName + ' : ' + result.token);
+        token = result.token;
+        // print(token);
+        db
+            .collection('RoomChannels')
+            .doc(channelName)
+            .set({"name": channelName, "token": token});
       }
     }
 
@@ -104,7 +119,7 @@ class CreateRoom extends StatelessWidget {
                         addRoom();
                       },
                       child: Text(
-                        "CREATE ROOM",
+                        DataModel.NEXT,
                         style: CustomStyle.customButtonTextStyle(
                             color: Colors.white, fontWeight: FontWeight.bold),
                       ),

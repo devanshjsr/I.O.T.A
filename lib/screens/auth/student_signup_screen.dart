@@ -74,23 +74,9 @@ class _StudentSignupAuthCardState extends State<StudentSignupAuthCard> {
     'email': '',
     'mobileNumber': '',
     'password': '',
-    'branch': '',
   };
   var _isLoading = false;
   final _passwordController = TextEditingController();
-  String dropDownValue = "CSE";
-
-  static List<String> branchNames = [
-    "CSE",
-    "IT",
-    "ECE",
-    "EE",
-    "ME",
-    "CHEM",
-    "Civil",
-    "PIE",
-    "Bio-Tech",
-  ];
 
   Future<void> _submit() async {
     if (!_formKey.currentState.validate()) {
@@ -244,53 +230,6 @@ class _StudentSignupAuthCardState extends State<StudentSignupAuthCard> {
                     onSaved: (value) {
                       _authData['mobileNumber'] = value;
                     },
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Container(
-                    decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(10),
-                        border: Border.all(
-                            color: CustomStyle.primaryColor, width: 2)),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.all(16.0),
-                          child: Text(
-                            "Branch:",
-                            style: TextStyle(
-                              color: CustomStyle.primaryColor,
-                              fontSize: 16,
-                            ),
-                          ),
-                        ),
-                        Spacer(),
-                        DropdownButton<String>(
-                            value: dropDownValue,
-                            icon: const Icon(Icons.arrow_drop_down),
-                            iconSize: 35,
-                            elevation: 20,
-                            style: const TextStyle(
-                                color: CustomStyle.primaryColor, fontSize: 18),
-                            onChanged: (newValue) {
-                              setState(() {
-                                _authData['branch'] = newValue;
-                                dropDownValue = newValue;
-                              });
-                            },
-                            items: branchNames.map<DropdownMenuItem<String>>(
-                              (String value) {
-                                return DropdownMenuItem<String>(
-                                  value: value,
-                                  child: Text(value),
-                                );
-                              },
-                            ).toList()),
-                      ],
-                    ),
                   ),
                   SizedBox(
                     height: 10,

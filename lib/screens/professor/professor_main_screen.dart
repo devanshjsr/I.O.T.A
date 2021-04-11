@@ -1,13 +1,15 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:iota/screens/professor/add_subjects.dart';
-import 'package:iota/subjects/subject_tile.dart';
-import 'package:iota/subjects/subject_tile_shimmer.dart';
-import 'package:iota/widgets/app_drawer.dart';
 import 'package:provider/provider.dart';
 
 import '../../models/data_model.dart';
 import '../../models/subject_model.dart';
+import '../../services/dynamic_link_service.dart';
+import '../../widgets/app_drawer.dart';
+import '../subjects/subject_tile.dart';
+import '../subjects/subject_tile_shimmer.dart';
+import 'addSubjects.dart';
+import 'approve_join_requests_screen.dart';
 
 class ProfessorMainScreen extends StatefulWidget {
   static const routeName = "/professor_main_screen";
@@ -22,6 +24,10 @@ String uid = user.uid;
 //FirebaseFirestore.instance.collection("Faculty").doc(Uid).collection("MyData").
 class _ProfessorMainScreenState extends State<ProfessorMainScreen> {
   @override
+  void initState() {
+    DynamicLinkService.initDynamicLinks(context);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,6 +38,7 @@ class _ProfessorMainScreenState extends State<ProfessorMainScreen> {
           actions: [
             IconButton(
               onPressed: () {
+                Navigator.of(context).pushNamed(ApproveJoinRequests.routeName);
               },
               icon: Icon(Icons.notification_important_sharp),
             ),
@@ -76,4 +83,3 @@ class _ProfessorMainScreenState extends State<ProfessorMainScreen> {
         drawer: AppDrawer(DataModel.HOME));
   }
 }
-

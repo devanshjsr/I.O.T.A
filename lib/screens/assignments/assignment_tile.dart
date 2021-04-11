@@ -5,7 +5,7 @@ import '../../models/assignment_model.dart';
 import '../../models/shared_preferences.dart';
 import '../../styles.dart';
 import 'view_assignment.dart';
-import 'view_assignment_argument.dart';
+import 'view_assignment_arguments.dart';
 import 'view_submission.dart';
 
 class AssignmentTile extends StatelessWidget {
@@ -26,7 +26,7 @@ class AssignmentTile extends StatelessWidget {
     }
 
     assignmentOptions(Offset offset) {
-      CustomDialog.showAssignmentDialog(context, offset, assignment, type);
+        CustomDialog.showAssignmentDialog(context, offset, assignment,type);
     }
 
     return GestureDetector(

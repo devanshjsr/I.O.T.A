@@ -1,18 +1,29 @@
 import 'package:flutter/material.dart';
-import 'package:iota/dialog/custom_dialog.dart';
-import 'package:iota/models/data_model.dart';
-import 'package:iota/models/subject_model.dart';
-import 'package:iota/screens/student/custom_fab.dart';
-import 'package:iota/screens/subjects/subject_search.dart';
-import 'package:iota/screens/subjects/subject_tile_shimmer.dart';
-import 'package:iota/subjects/subject_tile.dart';
-import 'package:iota/widgets/app_drawer.dart';
 import 'package:provider/provider.dart';
 
-import '../../models/auth_provider.dart';
+import '../../models/data_model.dart';
+import '../../models/subject_model.dart';
+import '../../services/dynamic_link_service.dart';
+import '../../widgets/app_drawer.dart';
+import '../subjects/subject_search.dart';
+import '../subjects/subject_tile.dart';
+import '../subjects/subject_tile_shimmer.dart';
+import 'custom_fab.dart';
 
-class StudentMainScreen extends StatelessWidget {
+class StudentMainScreen extends StatefulWidget {
   static const routeName = "/student_main_screen";
+
+  @override
+  _StudentMainScreenState createState() => _StudentMainScreenState();
+}
+
+class _StudentMainScreenState extends State<StudentMainScreen> {
+  @override
+  void initState() {
+    DynamicLinkService.initDynamicLinks(context);
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -25,11 +36,11 @@ class StudentMainScreen extends StatelessWidget {
             },
             icon: Icon(Icons.search),
           ),
-        
-      ],),
-      body:  FutureBuilder(
+        ],
+      ),
+      body: FutureBuilder(
         future: Provider.of<SubjectProvider>(context, listen: false)
-            .fetchMyEnrolledSubjects(),
+            .fetchMyEnrolledSubjects(context),
         builder: (ctx, dataSnapShot) {
           if (dataSnapShot.connectionState == ConnectionState.waiting) {
             return ListView.builder(
@@ -47,7 +58,7 @@ class StudentMainScreen extends StatelessWidget {
               builder: (ctx, subjectData, child) => RefreshIndicator(
                 onRefresh: () {
                   return Provider.of<SubjectProvider>(context, listen: false)
-                      .fetchMyEnrolledSubjects();
+                      .fetchMyEnrolledSubjects(context);
                 },
                 child: ListView.builder(
                   itemCount: subjectData.getMyEnrolledSubjectsList.length,

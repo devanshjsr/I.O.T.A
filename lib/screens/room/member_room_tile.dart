@@ -8,7 +8,11 @@ import 'member_room.dart';
 class MemberRoomTile extends StatelessWidget {
   final MemberRoom memberRoom;
   final type;
-  MemberRoomTile({@required this.memberRoom, @required this.type});
+  final Function refreshFunction;
+  MemberRoomTile(
+      {@required this.memberRoom,
+      @required this.type,
+      @required this.refreshFunction});
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -53,6 +57,7 @@ class MemberRoomTile extends StatelessWidget {
                       onPressed: () {
                         Provider.of<RoomProvider>(context, listen: false)
                             .addMember(memberRoom.room, memberRoom.id);
+                        refreshFunction();
                       },
                       icon: Icon(Icons.add)),
                 )
@@ -62,6 +67,7 @@ class MemberRoomTile extends StatelessWidget {
                       onPressed: () {
                         Provider.of<RoomProvider>(context, listen: false)
                             .removeMember(memberRoom.room, memberRoom.id);
+                        refreshFunction();
                       },
                       icon: Icon(
                         Icons.delete_outline_outlined,

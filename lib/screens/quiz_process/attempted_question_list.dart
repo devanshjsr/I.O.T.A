@@ -10,7 +10,8 @@ class AttemptedQuestionList extends StatefulWidget {
   static const routeName = "/attempted_question_list_screen";
 
   final String quizId;
-  AttemptedQuestionList(this.quizId);
+  final String quizName;
+  AttemptedQuestionList(this.quizId, this.quizName);
   @override
   _AttemptedQuestionListState createState() =>
       _AttemptedQuestionListState(quizId);
@@ -56,6 +57,9 @@ class _AttemptedQuestionListState extends State<AttemptedQuestionList>
     super.build(context);
 
     return Scaffold(
+        appBar: AppBar(
+          title: Text("Quiz: ${widget.quizName}"),
+        ),
         body: FutureBuilder(
             future: future(),
             builder: (ctx, snapshot) {

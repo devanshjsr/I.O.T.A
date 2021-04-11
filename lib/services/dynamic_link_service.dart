@@ -17,12 +17,12 @@ class DynamicLinkService {
       link: Uri.parse(
           "http://sharequizapp.page.link/share_subject?subject_code=${subject.subjectCode}"),
       androidParameters: AndroidParameters(
-        packageName: "com.example.QuizApp",
+        packageName: "com.example.iota",
         minimumVersion: 0,
         fallbackUrl: Uri.parse("http://www.example.com"),
       ),
       iosParameters: IosParameters(
-        bundleId: "com.example.QuizApp",
+        bundleId: "com.example.iota",
         minimumVersion: "0",
         fallbackUrl: Uri.parse("http://www.example.com"),
       ),

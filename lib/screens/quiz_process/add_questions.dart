@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -5,7 +6,8 @@ import 'package:flutter/rendering.dart';
 import '../../models/data_model.dart';
 import '../../services/database_services.dart';
 import '../../styles.dart';
-import '../temp_screen.dart';
+import '../../widgets/voice_search_bottom_sheet.dart';
+import '../professor/professor_main_screen.dart';
 
 String _quizId;
 int _totalQuestions;
@@ -40,6 +42,7 @@ class _AddQuestionsState extends State<AddQuestions> {
   @override
   void initState() {
     _loadingIndicator = false;
+
     // TODO: implement initState
     isOkay = true;
     for (int i = 0; i < isIncomplete.length; i++) {
@@ -61,11 +64,18 @@ class _AddQuestionsState extends State<AddQuestions> {
       String queId = _quizId + queNo;
       await dbs.addQuestion(e.value, _quizId, queId);
     }
+
+    await FirebaseFirestore.instance
+        .collection("Subjects")
+        .doc(quizMap["subjectId"])
+        .collection("QuizList")
+        .doc(quizMap["quizId"])
+        .set({"title": quizMap["title"]});
     setState(() {
       _loadingIndicator = false;
     });
 
-    Navigator.pushNamed(context, Temp.routeName);
+    Navigator.pushNamed(context, ProfessorMainScreen.routeName);
   }
 
   //  Using listView.builder to generate (totalQuestions+1) widgets
@@ -193,11 +203,13 @@ class _QuestionInfoState extends State<QuestionInfo>
 
   //AddQuestions object = new AddQuestions();
   final _formKey = GlobalKey<FormState>();
+  TextEditingController controller;
 
   @override
   bool get wantKeepAlive => true;
 
   void initState() {
+    controller = TextEditingController();
     isIncomplete[questionNumber] = inputAllowed;
     super.initState();
   }
@@ -246,9 +258,235 @@ class _QuestionInfoState extends State<QuestionInfo>
   }
 
   @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     super.build(context);
-    return Scaffold();
-    
+
+    addQuestionDataFromVoice(String data) {
+      controller.text += data;
+    }
+
+    return Card(
+      margin: EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10),
+        side: BorderSide(
+          width: 3,
+          color: inputAllowed ? CustomStyle.primaryColor : Colors.green[800],
+        ),
+      ),
+      color: inputAllowed ? Colors.white : Colors.green[50],
+      elevation: 5,
+      child: Form(
+        key: _formKey,
+        child: Container(
+          padding: EdgeInsets.symmetric(horizontal: 15, vertical: 8),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              Text(
+                "Question ${questionNumber + 1}",
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: CustomStyle.primaryColor,
+                ),
+              ),
+              SizedBox(
+                height: 5,
+              ),
+              TextFormField(
+                maxLines: 5,
+                minLines: 3,
+                controller: controller,
+                autovalidateMode: AutovalidateMode.onUserInteraction,
+                textInputAction: TextInputAction.next,
+                decoration: CustomStyle.customTextFieldDecoration(
+                  labelText: 'Question',
+                  suffixIconBtn: IconButton(
+                    icon: Icon(Icons.mic),
+                    onPressed: () {
+                      showModalBottomSheet(
+                        isScrollControlled: true,
+                        context: context,
+                        builder: (_) {
+                          return VoiceSearchBottomSheet(
+                              addQuestionDataFromVoice);
+                        },
+                      );
+                    },
+                  ),
+                ),
+                keyboardType: TextInputType.name,
+                validator: (value) {
+                  if (value.length == 0) {
+                    return DataModel.REQUIRED;
+                  } else {
+                    return null;
+                  }
+                },
+                onSaved: (value) => question = value,
+                enabled: inputAllowed,
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              TextFormField(
+                autovalidateMode: AutovalidateMode.onUserInteraction,
+                textInputAction: TextInputAction.next,
+                decoration: CustomStyle.customTextFieldDecoration(
+                  labelText: 'Option 1',
+                ),
+                keyboardType: TextInputType.text,
+                validator: (value) {
+                  if (value.length == 0) {
+                    return DataModel.REQUIRED;
+                  } else {
+                    return null;
+                  }
+                },
+                onSaved: (value) => option1 = value,
+                enabled: inputAllowed,
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              TextFormField(
+                autovalidateMode: AutovalidateMode.onUserInteraction,
+                textInputAction: TextInputAction.next,
+                decoration: CustomStyle.customTextFieldDecoration(
+                  labelText: 'Option 2',
+                ),
+                keyboardType: TextInputType.text,
+                validator: (value) {
+                  if (value.length == 0) {
+                    return DataModel.REQUIRED;
+                  } else {
+                    return null;
+                  }
+                },
+                onSaved: (value) => option2 = value,
+                enabled: inputAllowed,
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              TextFormField(
+                autovalidateMode: AutovalidateMode.onUserInteraction,
+                textInputAction: TextInputAction.next,
+                decoration: CustomStyle.customTextFieldDecoration(
+                  labelText: 'Option 3',
+                ),
+                keyboardType: TextInputType.text,
+                validator: (value) {
+                  if (value.length == 0) {
+                    return DataModel.REQUIRED;
+                  } else {
+                    return null;
+                  }
+                },
+                onSaved: (value) => option3 = value,
+                enabled: inputAllowed,
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              TextFormField(
+                autovalidateMode: AutovalidateMode.onUserInteraction,
+                textInputAction: TextInputAction.next,
+                decoration: CustomStyle.customTextFieldDecoration(
+                  labelText: 'Option 4',
+                ),
+                keyboardType: TextInputType.text,
+                validator: (value) {
+                  if (value.length == 0) {
+                    return DataModel.REQUIRED;
+                  } else {
+                    return null;
+                  }
+                },
+                onFieldSubmitted: (_) =>
+                    FocusScope.of(context).requestFocus(FocusNode()),
+                onSaved: (value) => option4 = value,
+                enabled: inputAllowed,
+              ),
+              SizedBox(
+                height: 5,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Text(
+                    "Correct Option: ",
+                    style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: CustomStyle.primaryColor),
+                  ),
+                  DropdownButton<String>(
+                      value: dropDownValue,
+                      icon: const Icon(Icons.arrow_drop_down),
+                      iconSize: 20,
+                      elevation: 16,
+                      style: const TextStyle(
+                          color: CustomStyle.primaryColor, fontSize: 14),
+                      onChanged: !inputAllowed
+                          ? null
+                          : (newValue) {
+                              setState(() {
+                                dropDownValue = newValue;
+                                correctOption = newValue;
+                              });
+                            },
+                      items: <String>[
+                        'Option 1',
+                        'Option 2',
+                        'Option 3',
+                        'Option 4',
+                      ].map<DropdownMenuItem<String>>(
+                        (String value) {
+                          //correctOption = value;
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          );
+                        },
+                      ).toList()),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  ElevatedButton(
+                    style: CustomStyle.customElevatedButtonStyle(),
+                    onPressed: add,
+                    child: Text(
+                      "Save",
+                      style: CustomStyle.customButtonTextStyle(
+                        color: CustomStyle.textLight,
+                      ),
+                    ),
+                  ),
+                  ElevatedButton(
+                    style: CustomStyle.customElevatedButtonStyle(),
+                    onPressed: edit,
+                    child: Text(
+                      "Edit",
+                      style: CustomStyle.customButtonTextStyle(
+                        color: CustomStyle.textLight,
+                      ),
+                    ),
+                  ),
+                ],
+              )
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }

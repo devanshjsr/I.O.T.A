@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../../models/assignment_model.dart';
 import '../../models/data_model.dart';
-import '../../subjects/subject_tile_shimmer.dart';
+import '../subjects/subject_tile_shimmer.dart';
 import 'submission_tile.dart';
 
 class ViewSubmission extends StatelessWidget {

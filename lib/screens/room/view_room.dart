@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:iota/screens/room/room_tile.dart';
 import 'package:provider/provider.dart';
 
 import '../../models/data_model.dart';
@@ -7,6 +6,7 @@ import '../../models/room_model.dart';
 import '../../models/shared_preferences.dart';
 import '../../models/subject_model.dart';
 import '../subjects/subject_tile_shimmer.dart';
+import 'room_tile.dart';
 
 class ViewRoom extends StatelessWidget {
   static final routeName = "/viewRoom";
@@ -15,7 +15,7 @@ class ViewRoom extends StatelessWidget {
     Subject subject = ModalRoute.of(context).settings.arguments;
     return Scaffold(
       appBar: AppBar(
-        title: Text("Rooms"),
+        title: Text("View Rooms"),
       ),
       body: MySharedPreferences.isStudent
           ? FutureBuilder(

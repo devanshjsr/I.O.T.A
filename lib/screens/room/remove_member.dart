@@ -11,6 +11,11 @@ class RemoveMember extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Room room = ModalRoute.of(context).settings.arguments;
+    refresh() {
+      return Provider.of<RoomProvider>(context, listen: false)
+          .fetchMembersRoom(room);
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: Text("Remove Member"),
@@ -36,11 +41,11 @@ class RemoveMember extends StatelessWidget {
                       itemBuilder: (ctx, index) => MemberRoomTile(
                         memberRoom: roomData.getMemberRoom.toList()[index],
                         type: "remove",
+                        refreshFunction: refresh,
                       ),
                     ),
                     onRefresh: () {
-                      return Provider.of<RoomProvider>(context, listen: false)
-                          .fetchMembersRoom(room);
+                      return refresh();
                     }),
               );
             }

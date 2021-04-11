@@ -1,10 +1,10 @@
-import 'package:iota/screens/quiz_process/question_list_professor.dart';
-import 'package:iota/services/database_services.dart';
-import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:iota/screens/quiz_process/attempted_question_list.dart';
-import '../../styles.dart';
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+
+import '../../services/database_services.dart';
+import '../../styles.dart';
+import 'question_list_professor.dart';
 
 class QuizListProfessor extends StatefulWidget {
   final String subjectId;

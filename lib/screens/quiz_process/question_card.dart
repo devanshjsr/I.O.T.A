@@ -71,14 +71,13 @@ class _QuestionCardState extends State<QuestionCard>
             text,
             style: TextStyle(
                 color: isSelected ? Colors.green : CustomStyle.primaryColor,
-                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal),
+                fontWeight: FontWeight.bold),
           ),
         ),
       );
     }
 
     super.build(context);
-    bool inputAllowed = true;
     print(answerList);
     print(markedForReview);
 
@@ -93,12 +92,10 @@ class _QuestionCardState extends State<QuestionCard>
                 borderRadius: BorderRadius.circular(10),
                 side: BorderSide(
                   width: 3,
-                  color: inputAllowed
-                      ? CustomStyle.primaryColor
-                      : Colors.green[800],
+                  color: CustomStyle.primaryColor,
                 ),
               ),
-              color: inputAllowed ? Colors.white : Colors.green[50],
+              color: Colors.white,
               elevation: 5,
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 15, vertical: 15),

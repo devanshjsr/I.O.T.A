@@ -11,6 +11,12 @@ class AddStudents extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Room room = ModalRoute.of(context).settings.arguments;
+
+    refresh() {
+      return Provider.of<RoomProvider>(context, listen: false)
+          .fetchNonMembersRoom(room.subjectId, room);
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: Text("Add members"),
@@ -36,11 +42,11 @@ class AddStudents extends StatelessWidget {
                       itemBuilder: (ctx, index) => MemberRoomTile(
                         memberRoom: roomData.getnotInRoomMember.toList()[index],
                         type: "add",
+                        refreshFunction: refresh,
                       ),
                     ),
                     onRefresh: () {
-                      return Provider.of<RoomProvider>(context, listen: false)
-                          .fetchNonMembersRoom(room.subjectId, room);
+                      return refresh();
                     }),
               );
             }
