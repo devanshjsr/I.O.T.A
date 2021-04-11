@@ -3,11 +3,12 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '/models/assignment_model.dart';
-import '/models/room_model.dart';
 import 'animated_splash.dart';
+import 'models/assignment_model.dart';
 import 'models/auth_provider.dart';
 import 'models/fcm_provider.dart';
+import 'models/post_model.dart';
+import 'models/room_model.dart';
 import 'models/shared_preferences.dart';
 import 'models/subject_model.dart';
 import 'routes.dart';
@@ -45,12 +46,15 @@ class MyApp extends StatelessWidget {
           create: (_) => FcmProvider(),
         ),
         ChangeNotifierProvider(
+          create: (_) => PostProvider(),
+        ),
+        ChangeNotifierProvider(
           create: (_) => RoomProvider(),
         ),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        title: "Quiz App",
+        title: "I.O.T.A",
         theme: ThemeData(
           scaffoldBackgroundColor: CustomStyle.backgroundColor,
           primarySwatch: Colors.blue,

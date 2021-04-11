@@ -69,6 +69,7 @@ class CustomStyle {
     String labelText = "Label",
     String hintText = "",
     Icon prefixIcon,
+    IconButton suffixIconBtn,
   }) =>
       InputDecoration(
         fillColor: Colors.white,
@@ -77,6 +78,7 @@ class CustomStyle {
         hintText: hintText,
         labelText: labelText,
         prefixIcon: prefixIcon,
+        suffixIcon: suffixIconBtn,
         labelStyle: TextStyle(color: primaryColor),
         focusedBorder: OutlineInputBorder(
           borderSide: BorderSide(color: primaryColor, width: 2),

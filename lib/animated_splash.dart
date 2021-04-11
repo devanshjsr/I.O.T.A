@@ -26,7 +26,7 @@ class AnimatedSplash extends StatelessWidget {
             width: 300,
           ),
           Text(
-            "QUIZ APP",
+            "I.O.T.A.",
             style: TextStyle(
                 fontSize: 40,
                 fontWeight: FontWeight.bold,

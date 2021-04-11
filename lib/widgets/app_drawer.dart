@@ -1,15 +1,14 @@
+import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:url_launcher/url_launcher.dart';
 
-import '../screens/temp_screen.dart';
-
+import '../models/data_model.dart';
 import '../models/shared_preferences.dart';
 import '../screens/professor/professor_main_screen.dart';
 import '../screens/student/student_main_screen.dart';
-
-
-import '../models/data_model.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-
-import 'package:flutter/material.dart';
+import '../screens/temp_screen.dart';
+import '../screens/user_profile_screen.dart';
+import '../screens/video/video_home_screen.dart';
 
 class AppDrawer extends StatelessWidget {
   //  Name of the page from where we opened the app drawer
@@ -100,7 +99,8 @@ class AppDrawer extends StatelessWidget {
                 leading: Icon(Icons.person_outline),
                 title: Text(DataModel.MY_PROFILE),
                 onTap: () {
-                 
+                  checkAndPush(
+                      DataModel.MY_PROFILE, UserProfileScreen.routeName);
                 },
               ),
               Divider(
@@ -112,9 +112,14 @@ class AppDrawer extends StatelessWidget {
                 leading: Icon(Icons.mail),
                 title: Text(DataModel.CONTACT_US),
                 onTap: () async {
-            
+                  var url =
+                      "mailto:aditya2512sharma@gmail.com?subject=IOTA Query&body=Please provide details regarding your problem.\nWe will contact you shortly.";
+                  if (await canLaunch(url)) {
+                    await launch(url);
+                  } else {
+                    Fluttertoast.showToast(msg: DataModel.SOMETHING_WENT_WRONG);
                   }
-      
+                },
               ),
 
               Divider(
@@ -140,7 +145,7 @@ class AppDrawer extends StatelessWidget {
                 leading: Icon(Icons.video_call),
                 title: Text(DataModel.VIDEO_CALL),
                 onTap: () {
-          
+                  checkAndPush(DataModel.VIDEO_CALL, VideoHomeScreen.routeName);
                   // Navigator.of(context).pop();
                   // Navigator.of(context).pushNamed(HomeScreen.routeName);
                 },
