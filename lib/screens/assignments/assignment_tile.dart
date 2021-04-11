@@ -26,7 +26,7 @@ class AssignmentTile extends StatelessWidget {
     }
 
     assignmentOptions(Offset offset) {
-        CustomDialog.showAssignmentDialog(context, offset, assignment,type);
+      CustomDialog.showAssignmentDialog(context, offset, assignment, type);
     }
 
     return GestureDetector(

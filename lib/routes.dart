@@ -20,7 +20,6 @@ import 'screens/student/student_main_screen.dart';
 import 'screens/subjects/subject_bottom_navbar.dart';
 import 'screens/subjects/subject_details/subject_settings.dart';
 import 'screens/subjects/subject_search.dart';
-import 'screens/temp_screen.dart';
 import 'screens/user_profile_screen.dart';
 import 'screens/video/call_screen.dart';
 import 'screens/video/create_channel.dart';
@@ -36,7 +35,6 @@ Map<String, WidgetBuilder> routes = {
   ProfessorMainScreen.routeName: (ctx) => ProfessorMainScreen(),
   AddSubjects.routeName: (ctx) => AddSubjects(),
   UserProfileScreen.routeName: (ctx) => UserProfileScreen(),
-  Temp.routeName: (ctx) => Temp(),
 
   // video routes
   CreateChannel.routeName: (ctx) => CreateChannel(),

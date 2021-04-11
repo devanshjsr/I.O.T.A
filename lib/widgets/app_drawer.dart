@@ -6,7 +6,6 @@ import '../models/data_model.dart';
 import '../models/shared_preferences.dart';
 import '../screens/professor/professor_main_screen.dart';
 import '../screens/student/student_main_screen.dart';
-import '../screens/temp_screen.dart';
 import '../screens/user_profile_screen.dart';
 import '../screens/video/video_home_screen.dart';
 
@@ -109,6 +108,16 @@ class AppDrawer extends StatelessWidget {
                 indent: 15,
               ),
               ListTile(
+                leading: Icon(Icons.video_call),
+                title: Text(DataModel.VIDEO_CALL),
+                onTap: () {
+                  checkAndPush(DataModel.VIDEO_CALL, VideoHomeScreen.routeName);
+                  // Navigator.of(context).pop();
+                  // Navigator.of(context).pushNamed(HomeScreen.routeName);
+                },
+              ),
+
+              ListTile(
                 leading: Icon(Icons.mail),
                 title: Text(DataModel.CONTACT_US),
                 onTap: () async {
@@ -122,34 +131,12 @@ class AppDrawer extends StatelessWidget {
                 },
               ),
 
-              Divider(
-                thickness: 1,
-                endIndent: 15,
-                indent: 15,
-              ),
-              ListTile(
-                leading: Icon(Icons.tab_unselected),
-                title: Text("Temp"),
-                onTap: () {
-                  checkAndPush("Temp", Temp.routeName);
-                },
-              ),
-
               // video home page
               Divider(
                 thickness: 1,
                 endIndent: 15,
                 indent: 15,
               ),
-              ListTile(
-                leading: Icon(Icons.video_call),
-                title: Text(DataModel.VIDEO_CALL),
-                onTap: () {
-                  checkAndPush(DataModel.VIDEO_CALL, VideoHomeScreen.routeName);
-                  // Navigator.of(context).pop();
-                  // Navigator.of(context).pushNamed(HomeScreen.routeName);
-                },
-              )
             ],
           ),
         ),

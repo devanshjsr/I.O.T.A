@@ -10,7 +10,7 @@ class DataModel {
   static const CONFIRM_PASSWORD = "Confirm Password";
   static const FORGOT_PASSWORD = "Forgot Password ?";
   static const LOGIN = "Login ?";
-  static const HELLO_FRIEND = "Hello, buddy!";
+  static const HELLO_FRIEND = "Welcome to I.O.T.A.";
   static const LETS_GET_STARTED = "Let's get it rolling";
   static const NAME = "Name";
   static const INVALID_NAME = "Invalid Name!";
@@ -74,7 +74,7 @@ class DataModel {
   static const WORK_REMOVED = "Assignment Removed";
   static const DEADLINE_PASSED = "Sorry Deadline Already Passed";
   static const DEADLINE_CHANGED = "Dealine Changed";
-  
+
   //Room
   static const ROOM_NAME = "Enter Room Name";
   static const ROOM_DESC = "What It's for ?? ";
