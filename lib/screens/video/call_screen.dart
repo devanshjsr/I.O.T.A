@@ -200,7 +200,7 @@ class IndexState extends State<IndexPage> {
       if (snapshot.size == 0) {
         print('NO CHANNEL');
         // no channel with the specified name
-        // return CustomDialog.noChannelDialog(context);
+        return CustomDialog.noChannelDialog(context);
       } else {
         String token = '';
         snapshot.docs.forEach((doc) {

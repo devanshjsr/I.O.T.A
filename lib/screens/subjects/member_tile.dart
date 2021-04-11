@@ -77,8 +77,8 @@ class MemberTile extends StatelessWidget {
                   ElevatedButton(
                     style: CustomStyle.customElevatedButtonStyle(isError: true),
                     onPressed: () {
-                      // Provider.of<SubjectProvider>(context, listen: false)
-                      //     .removeFromSubject(subject, member.id, context);
+                      Provider.of<SubjectProvider>(context, listen: false)
+                          .removeFromSubject(subject, member.id, context);
                     },
                     child: Text(
                       "REMOVE",

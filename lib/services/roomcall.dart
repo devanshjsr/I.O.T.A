@@ -9,31 +9,26 @@ import 'package:flutter/material.dart';
 
 import '../dialog/custom_dialog.dart';
 import '../models/avatar.dart';
-import '../models/caller_model.dart';
 import '../models/shared_preferences.dart';
-import '../models/subject_model.dart';
 import '../styles.dart';
 import 'settings.dart';
 import 'token.dart';
 
-class CallPage extends StatefulWidget {
+class RoomCallPage extends StatefulWidget {
   /// non-modifiable channel name of the page
   final String channelName;
 
   /// non-modifiable client role of the page
   final String token;
 
-  final Subject subject;
-
   /// Creates a call page with given channel name.
-  const CallPage({Key key, this.channelName, this.token, this.subject})
-      : super(key: key);
+  const RoomCallPage({Key key, this.channelName, this.token}) : super(key: key);
 
   @override
-  _CallPageState createState() => _CallPageState();
+  _RoomCallPageState createState() => _RoomCallPageState();
 }
 
-class _CallPageState extends State<CallPage> {
+class _RoomCallPageState extends State<RoomCallPage> {
   final _users = <int>[];
   final _anonUsers = <int>[];
   final _infoStrings = <String>[];
@@ -53,7 +48,7 @@ class _CallPageState extends State<CallPage> {
     // destroy sdk
     _engine.leaveChannel();
     _engine.destroy();
-    CallMethods.liveEnded(_currentUid, widget.channelName);
+    // CallMethods.liveEnded(_currentUid, widget.channelName);
     super.dispose();
   }
 
@@ -120,25 +115,25 @@ class _CallPageState extends State<CallPage> {
       },
       joinChannelSuccess: (channel, uid, elapsed) async {
         _currentUid = uid;
-        var _docId;
-        final db = FirebaseFirestore.instance;
-        await db
-            .collection('channels')
-            .doc('live')
-            .collection(widget.channelName)
-            .where('callerFirebaseUid',
-                isEqualTo: FirebaseAuth.instance.currentUser.uid)
-            .get()
-            .then((value) => value.docs.forEach((element) {
-                  _docId = element.id;
-                }));
-        await db
-            .collection('channels')
-            .doc('live')
-            .collection(widget.channelName)
-            .doc(_docId)
-            .update({'callerAgoraUid': uid});
-        // await getUserNamesFromAgoraUid();
+        // var _docId;
+        // final db = FirebaseFirestore.instance;
+        // await db
+        //     .collection('channels')
+        //     .doc('live')
+        //     .collection(widget.channelName)
+        //     .where('callerFirebaseUid',
+        //         isEqualTo: FirebaseAuth.instance.currentUser.uid)
+        //     .get()
+        //     .then((value) => value.docs.forEach((element) {
+        //           _docId = element.id;
+        //         }));
+        // await db
+        //     .collection('channels')
+        //     .doc('live')
+        //     .collection(widget.channelName)
+        //     .doc(_docId)
+        //     .update({'callerAgoraUid': uid});
+        // // await getUserNamesFromAgoraUid();
         setState(() {
           final info = 'onJoinChannel: $channel, uid: $uid';
           _infoStrings.add(info);
@@ -168,14 +163,14 @@ class _CallPageState extends State<CallPage> {
           final info = 'userOffline: $uid';
           _infoStrings.add(info);
           _users.remove(uid);
-          Map<int, dynamic> nMap = Map();
-          for (int i in _users) {
-            if (agoraToFirebaseMap.containsKey(i)) {
-              nMap[i] = agoraToFirebaseMap[i];
-            }
-          }
-          print('New agora Map : $nMap');
-          agoraToFirebaseMap = nMap;
+          // Map<int, dynamic> nMap = Map();
+          // for (int i in _users) {
+          //   if (agoraToFirebaseMap.containsKey(i)) {
+          //     nMap[i] = agoraToFirebaseMap[i];
+          //   }
+          // }
+          // print('New agora Map : $nMap');
+          // agoraToFirebaseMap = nMap;
         });
       },
       firstRemoteVideoFrame: (uid, width, height, elapsed) {
@@ -202,9 +197,8 @@ class _CallPageState extends State<CallPage> {
       connectionStateChanged: (state, reason) async {
         // print('Hellloooo I"m here');
         if (reason == ConnectionChangedReason.TokenExpired) {
-          await deleteTokens(
-              channelName: widget.channelName, subject: widget.subject);
-          await CallMethods.liveEnded(_currentUid, widget.channelName);
+          await deleteTokensOfRooms(channelName: widget.channelName);
+          // await CallMethods.liveEnded(_currentUid, widget.channelName);
           final expired = await CustomDialog.tokenExpireDialog(context);
           setState(() {
             _infoStrings.add('reason : $reason');
@@ -416,7 +410,7 @@ class _CallPageState extends State<CallPage> {
   void _onCallEnd(BuildContext context) {
     Navigator.pop(context);
     Navigator.pop(context);
-    CallMethods.liveEnded(_currentUid, widget.channelName);
+    // CallMethods.liveEnded(_currentUid, widget.channelName);
   }
 
   void _onToggleMute() {

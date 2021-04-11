@@ -1,11 +1,11 @@
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:iota/dialog/custom_dialog.dart';
-import 'package:iota/screens/room/view_room.dart';
 
+import '../../dialog/custom_dialog.dart';
 import '../../models/shared_preferences.dart';
 import '../../models/subject_model.dart';
 import '../../styles.dart';
+import '../room/view_room.dart';
 import 'subject_details/subject_assignment.dart';
 import 'subject_details/subject_details.dart';
 import 'subject_details/subject_members.dart';
@@ -67,7 +67,8 @@ class _SubjectBottomNavBarState extends State<SubjectBottomNavBar> {
                   width: 46,
                   height: 24,
                 ),
-            GestureDetector(
+          //Icon Button for post to everyone
+          GestureDetector(
             onTapDown: (data) {
               if (MySharedPreferences.isStudent) {
                 Navigator.of(context)

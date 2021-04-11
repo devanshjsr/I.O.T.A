@@ -31,7 +31,7 @@ class DatabaseServices {
         .snapshots();
   }
 
-  getQuestionList(String quizId) async {
+  Future<QuerySnapshot> getQuestionList(String quizId) async {
     return await FirebaseFirestore.instance
         .collection("Quiz_List")
         .doc(quizId)
@@ -138,6 +138,8 @@ class DatabaseServices {
     print("AAA" + data.data().toString());
     return data;
   }
+
+  ///prf
 
   Future<List<DocumentSnapshot>> getSubjectQuizzes(String subjectId) async {
     List<DocumentSnapshot> res = [];

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:iota/models/data_model.dart';
-import 'package:iota/models/subject_model.dart';
-import 'package:iota/screens/subjects/member_tile.dart';
-import 'package:iota/screens/subjects/subject_tile_shimmer.dart';
 import 'package:provider/provider.dart';
 
+import '../../../models/data_model.dart';
+import '../../../models/subject_model.dart';
+import '../member_tile.dart';
+import '../subject_tile_shimmer.dart';
 
 class SubjectMembers extends StatelessWidget {
   @override
