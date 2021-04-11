@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:iota/styles.dart';
 
 class WelcomeSliderTile extends StatelessWidget {
   final String imagePath, title, desc;
@@ -20,14 +21,15 @@ class WelcomeSliderTile extends StatelessWidget {
           Text(
             title,
             textAlign: TextAlign.center,
-            style: TextStyle(fontWeight: FontWeight.w500, fontSize: 20),
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 25,
+              color: CustomStyle.primaryColor,
+            ),
           ),
           SizedBox(
             height: 20,
           ),
-          Text(desc,
-              textAlign: TextAlign.center,
-              style: TextStyle(fontWeight: FontWeight.w500, fontSize: 14))
         ],
       ),
     );

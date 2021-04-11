@@ -288,7 +288,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                         errorBuilder:
                                             (ctx, object, stacktrace) {
                                           return Image.asset(
-                                            "assets/images/welcome.jpg",
+                                            "assets/images/logo.png",
                                             fit: BoxFit.fill,
                                             height: 266,
                                             width: 266,

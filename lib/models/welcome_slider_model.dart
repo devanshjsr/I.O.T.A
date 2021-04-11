@@ -36,37 +36,37 @@ List<WelcomeSliderModel> getSlides() {
 
   //  Temp data
   //  TODO: Add appropriate data
-  welcomeSliderModel.setDesc(
-      "Eu fugiat adipisicing eu exercitation est cupidatat duis velit.");
-  welcomeSliderModel.setTitle("First page");
-  welcomeSliderModel.setImageAssetPath("assets/images/welcome.jpg");
+  welcomeSliderModel.setDesc("");
+  welcomeSliderModel.setTitle("Welcome to I.O.T.A.");
+  welcomeSliderModel.setImageAssetPath("assets/images/logo.png");
   slides.add(welcomeSliderModel);
 
   welcomeSliderModel = WelcomeSliderModel();
 
-  welcomeSliderModel.setDesc(
-      "Do nisi velit laborum aliquip officia dolor aliqua est sunt eiusmod ex proident mollit.");
-  welcomeSliderModel.setTitle("Second page");
-  welcomeSliderModel.setImageAssetPath("assets/images/welcome.jpg");
+  welcomeSliderModel.setDesc("");
+  welcomeSliderModel.setTitle("Safe and Anti-Cheat framework");
+  welcomeSliderModel.setImageAssetPath("assets/images/logo.png");
   slides.add(welcomeSliderModel);
 
   welcomeSliderModel = WelcomeSliderModel();
 
-  welcomeSliderModel
-      .setDesc("Laborum officia ut non ad reprehenderit eiusmod.");
-  welcomeSliderModel.setTitle("Third page");
-  welcomeSliderModel.setImageAssetPath("assets/images/welcome.jpg");
+  welcomeSliderModel.setDesc("");
+  welcomeSliderModel.setTitle("Auto-submission and clash avoidance of quizzes");
+  welcomeSliderModel.setImageAssetPath("assets/images/logo.png");
   slides.add(welcomeSliderModel);
 
   welcomeSliderModel = WelcomeSliderModel();
 
-  welcomeSliderModel.setDesc(
-      "Occaecat cupidatat nisi sint nisi duis nostrud elit irure aliqua ea non dolore.");
-  welcomeSliderModel.setTitle("Final page");
-  welcomeSliderModel.setImageAssetPath("assets/images/welcome.jpg");
+  welcomeSliderModel.setDesc("");
+  welcomeSliderModel.setTitle("Private rooms with video call feature");
+  welcomeSliderModel.setImageAssetPath("assets/images/logo.png");
   slides.add(welcomeSliderModel);
 
   welcomeSliderModel = WelcomeSliderModel();
+  welcomeSliderModel.setDesc("");
+  welcomeSliderModel.setTitle("");
+  welcomeSliderModel.setImageAssetPath("assets/images/logo.png");
+  slides.add(welcomeSliderModel);
 
   return slides;
 }
