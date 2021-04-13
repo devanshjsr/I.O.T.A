@@ -1,8 +1,6 @@
 # I.O.T.A
 ## Interactive Online Test Application
 
-![Made-at-Hack-36](https://user-images.githubusercontent.com/47004131/114283344-e8eb2b80-9a66-11eb-944d-7f1e808fe010.png)
-
 ### Contributors - 
 #### 1. <a href= "https://github.com/aanchalsingh17"> Aanchal Singh </a>
 #### 2. <a href= "https://github.com/aditya2548"> Aditya Sharma </a>
@@ -54,3 +52,12 @@ So we decided to come up with an All-In-One Test App providing a safe and conven
 2. Firebase Cloud Messaging.
 3. Firebase Dynamic Links.
 4. Heroku
+
+# Screenshots 
+|   |   |   |
+|---|---|---|
+|![quiz 1](https://raw.githubusercontent.com/aanchalsingh17/I.O.T.A/master/screenshots/create_quiz1.jpeg)|![quiz 2](https://raw.githubusercontent.com/aanchalsingh17/I.O.T.A/master/screenshots/create%20_quiz2.jpeg)|![pending assignments](https://raw.githubusercontent.com/aanchalsingh17/I.O.T.A/master/screenshots/pending_assignments.jpeg)|
+![quiz deadline](https://raw.githubusercontent.com/aanchalsingh17/I.O.T.A/master/screenshots/quiz_deadline.jpeg)|![sample quiz](https://raw.githubusercontent.com/aanchalsingh17/I.O.T.A/master/screenshots/sample_quiz.jpeg)|![share subject code](https://raw.githubusercontent.com/aanchalsingh17/I.O.T.A/master/screenshots/share_subject_code.jpeg)
+![subject profile](https://raw.githubusercontent.com/aanchalsingh17/I.O.T.A/master/screenshots/subject_profile.jpeg)|![submit assignments](https://raw.githubusercontent.com/aanchalsingh17/I.O.T.A/master/screenshots/submit_assignment.jpeg)|![upload assignments](https://raw.githubusercontent.com/aanchalsingh17/I.O.T.A/master/screenshots/upload_assignment.jpeg)
+
+![Made-at-Hack-36](https://user-images.githubusercontent.com/47004131/114283344-e8eb2b80-9a66-11eb-944d-7f1e808fe010.png)
